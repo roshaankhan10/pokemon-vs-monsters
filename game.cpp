@@ -1,4 +1,4 @@
-#include "game.hpp"
+#include "Game.hpp"
 #include "draw.hpp"
 
 bool Game::init()
@@ -148,7 +148,8 @@ void Game::run( )
 			{
 				int xMouse, yMouse;
 				SDL_GetMouseState(&xMouse,&yMouse);
-				createObject(xMouse, yMouse);
+				// was only used to call method inside Draw.cpp so that we could show something for progress log 1
+				// createObject(xMouse, yMouse);
 			}
 		}
 
@@ -167,7 +168,9 @@ void Game::run( )
     SDL_RenderFillRect(gRenderer, &whiteRect);
 		
 		drawMenu(gRenderer, pokemons);
-		drawObjects(gRenderer, projectiles);
+
+		// was only used to call method inside Draw.cpp so that we could show something for progress log 1
+		// drawObjects(gRenderer, projectiles);
 
 		//****************************************************************
     	SDL_RenderPresent(gRenderer); //displays the updated renderer
