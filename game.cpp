@@ -1,5 +1,5 @@
 #include "Game.hpp"
-#include "draw.hpp"
+// #include "draw.hpp"
 
 bool Game::init()
 {
@@ -148,6 +148,7 @@ void Game::run( )
 			{
 				int xMouse, yMouse;
 				SDL_GetMouseState(&xMouse,&yMouse);
+				std::cout << xMouse << " : " << yMouse << std::endl;
 				// was only used to call method inside Draw.cpp so that we could show something for progress log 1
 				// createObject(xMouse, yMouse);
 			}
@@ -162,12 +163,12 @@ void Game::run( )
     // SDL_SetRenderDrawColor(gRenderer, 255, 255, 255, 255);
 
     // Create a rectangle with white color 
-    SDL_Rect whiteRect = {240, 30, 300, 60};
+    // SDL_Rect whiteRect = {240, 30, 300, 60};
 
-    // Clear the renderer with the white color
-    SDL_RenderFillRect(gRenderer, &whiteRect);
+    // // Clear the renderer with the white color
+    // SDL_RenderFillRect(gRenderer, &whiteRect);
 		
-		drawMenu(gRenderer, pokemons);
+		// drawMenu(gRenderer, pokemons);
 
 		// was only used to call method inside Draw.cpp so that we could show something for progress log 1
 		// drawObjects(gRenderer, projectiles);

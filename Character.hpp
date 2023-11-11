@@ -1,9 +1,10 @@
-#include"Unit.hpp"
+// #include"Unit.hpp"
+#include"AnimationStates.hpp"
 
 class Character: public Unit
 {
 public:
-  void gotHit() = 0;
+  virtual void gotHit() = 0;
   AnimationStates sprite;
 
 private:

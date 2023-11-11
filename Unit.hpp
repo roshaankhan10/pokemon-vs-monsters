@@ -4,5 +4,5 @@ class Unit
 {
 public:
   SDL_Rect srcRect, moverRect;
-  void draw() = 0;
+  virtual void draw() = 0;
 };

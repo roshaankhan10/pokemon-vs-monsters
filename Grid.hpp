@@ -13,6 +13,6 @@ public:
 private:
   // the array that will store coordinates of each tile on the grid/background
   int startX, startY, tileWidth, tileHeight, numRows, numCols;
-  vector<SDL_Rect> tiles;
-  vector<Pokemon*> pokemons;
+  std::vector<SDL_Rect> tiles;
+  std::vector<Pokemon*> pokemons;
 };

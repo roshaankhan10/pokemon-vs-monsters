@@ -4,5 +4,11 @@
 class AnimationStates: public Unit
 {
 public:
-  vector<SDL_Rect> states;
+  std::vector<SDL_Rect> states;
+  int currFrame;
+  
+  void draw() override
+  {
+    currFrame = (currFrame + 1) % states.size();
+  }
 };
