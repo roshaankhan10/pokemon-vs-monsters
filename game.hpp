@@ -1,12 +1,9 @@
-
-#include <SDL.h>
+#include"Menu.hpp"
 #include <SDL_image.h>
 #include <stdio.h>
 #include <iostream>
-#include <string>
 #include <stdlib.h>
 #include <time.h>
-#include <vector>
 
 class Game{
     //Screen dimension constants
@@ -35,5 +32,7 @@ public:
     void close();
     SDL_Texture* loadTexture( std::string path );
     void run();
+    // method to determine if mouse is over a draggable object to start dragging it by changing selectedObject
+    bool IsMouseOverDraggableObject(int x, int y, std::vector<DraggableObject*> objects, DraggableObject*& selectedObject);
 };
 

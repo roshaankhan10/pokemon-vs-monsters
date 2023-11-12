@@ -1,5 +1,4 @@
 #include "Game.hpp"
-// #include "draw.hpp"
 
 bool Game::init()
 {
@@ -66,11 +65,11 @@ bool Game::loadMedia()
   monsters = loadTexture("assets/enemies.png");
   projectiles = loadTexture("assets/projectiles.png");
 
-	if(pokemons == NULL || gTexture == NULL || monsters == NULL || projectiles == NULL)
-    {
-        printf("Unable to run due to error: %s\n",SDL_GetError());
-        success =false;
-    }
+	if (pokemons == NULL || gTexture == NULL || monsters == NULL || projectiles == NULL)
+	{
+			printf("Unable to run due to error: %s\n",SDL_GetError());
+			success =false;
+	} 
 	
 	return success;
 }
@@ -128,10 +127,43 @@ SDL_Texture* Game::loadTexture( std::string path )
 	return newTexture;
 }
 
+bool Game::IsMouseOverDraggableObject(int x, int y, std::vector<DraggableObject*> objects, DraggableObject*& selectedObject) {
+	for (int i = 0; i < objects.size(); i++)
+	{
+		// Check if the mouse coordinates are within the object's bounding box
+		if (x >= objects[i]->moverRect.x && x <= objects[i]->moverRect.x + objects[i]->moverRect.w && y >= objects[i]->moverRect.y && y <= objects[i]->moverRect.y + objects[i]->moverRect.h) 
+		{ 
+			// Store the selected object for future reference
+			selectedObject = objects[i];
+			return true;
+		}
+	}
+	return false;
+}
+
 void Game::run( )
 {
 	bool quit = false;
 	SDL_Event e;
+	
+	// creates an object which will store pointer to the current object being dragged
+	DraggableObject* selectedPokemon = nullptr;
+
+	// declares variable of menu which will store all avaialable pokemon and their costs (costs not implemented yet)
+	Menu pokemonMenu;
+	
+	// creates draggable objects for each pokemon and push in pokemonMenu's icons
+	DraggableObject* braviary = new DraggableObject(pokemons, {11, 7, 88, 82}, {250, 40, 50, 50});
+	DraggableObject* charizard = new DraggableObject(pokemons, {597, 8, 74, 81}, {310, 30, 60, 60});
+	DraggableObject* metagross = new DraggableObject(pokemons, {949, 6, 77, 52}, {380, 50, 60, 40});
+	DraggableObject* pikachu = new DraggableObject(pokemons, {1365, 0, 39, 46}, {450, 50, 35, 35});
+	DraggableObject* azumarill = new DraggableObject(pokemons, {1621, 2, 58, 59}, {490, 40, 50, 50});
+	
+	pokemonMenu.pokemonIcons.push_back(braviary);
+	pokemonMenu.pokemonIcons.push_back(charizard);
+	pokemonMenu.pokemonIcons.push_back(metagross);
+	pokemonMenu.pokemonIcons.push_back(pikachu);
+	pokemonMenu.pokemonIcons.push_back(azumarill);
 
 	while( !quit )
 	{
@@ -144,14 +176,49 @@ void Game::run( )
 				quit = true;
 			}
 
-			if(e.type == SDL_MOUSEBUTTONDOWN)
+			//User selects a draggable object
+			if (e.type == SDL_MOUSEBUTTONDOWN) 
 			{
-				int xMouse, yMouse;
-				SDL_GetMouseState(&xMouse,&yMouse);
-				std::cout << xMouse << " : " << yMouse << std::endl;
-				// was only used to call method inside Draw.cpp so that we could show something for progress log 1
-				// createObject(xMouse, yMouse);
-			}
+      	if (e.button.button == SDL_BUTTON_LEFT) 
+				{
+					int xMouse, yMouse;
+					SDL_GetMouseState(&xMouse,&yMouse);
+					
+					// Check if the mouse click is on a draggable object
+					if (IsMouseOverDraggableObject(xMouse, yMouse, pokemonMenu.pokemonIcons, selectedPokemon)) 
+					{
+						// You can now track that selectedPokemon is being dragged
+						selectedPokemon->StartDragging();
+          }
+        }
+      }
+			
+			// User moves a draggable object
+			if (e.type == SDL_MOUSEMOTION && selectedPokemon != nullptr) 
+			{
+				if (selectedPokemon->IsBeingDragged()) 
+				{
+					// Update the position of the dragged selectedPokemon
+					selectedPokemon->UpdatePosition(e.motion.x, e.motion.y);
+				}
+      } 
+
+			// when user drops a draggable object
+			if (e.type == SDL_MOUSEBUTTONUP && selectedPokemon != nullptr) 
+			{
+				if (selectedPokemon->IsBeingDragged() && e.button.button == SDL_BUTTON_LEFT) 
+				{
+					// These are the coordinates where the selectedPokemon was dropped
+					// hence, these coordinates will be utilized later to insert pokemon in grid
+					std::cout << selectedPokemon->moverRect.x << " : " << selectedPokemon->moverRect.y << std::endl;
+
+					// Now we can stop dragging the selectedPokemon and return it to it's original position
+					selectedPokemon->StopDragging();
+
+					// since no pokemon is selected, change it back to nullptr
+					selectedPokemon = nullptr;
+				}
+      }
 		}
 
 		SDL_RenderClear(gRenderer); //removes everything from renderer
@@ -159,24 +226,33 @@ void Game::run( )
 
 		//***********************draw the objects here********************
 		
-		// Set the drawing color to white (255, 255, 255), already set to white before in load, initialize etc
-    // SDL_SetRenderDrawColor(gRenderer, 255, 255, 255, 255);
-
     // Create a rectangle with white color 
-    // SDL_Rect whiteRect = {240, 30, 300, 60};
-
-    // // Clear the renderer with the white color
-    // SDL_RenderFillRect(gRenderer, &whiteRect);
+    SDL_Rect whiteRect = {240, 30, 300, 60};
+    SDL_RenderFillRect(gRenderer, &whiteRect);
 		
-		// drawMenu(gRenderer, pokemons);
-
-		// was only used to call method inside Draw.cpp so that we could show something for progress log 1
-		// drawObjects(gRenderer, projectiles);
-
+		// draws the menu, including the selectedPokemon as it is coordinates are changed by reference through selectedPokemon
+		pokemonMenu.drawMenu(gRenderer);
+				
 		//****************************************************************
-    	SDL_RenderPresent(gRenderer); //displays the updated renderer
+		SDL_RenderPresent(gRenderer); //displays the updated renderer
 
-	    SDL_Delay(150);	//causes sdl engine to delay for specified miliseconds
+		// reduced delay to 50 ms for smooth transitions
+		SDL_Delay(50);	//causes sdl engine to delay for specified miliseconds
 	}
-			
+
+	// free heap to prevent memory leakages
+	delete braviary;
+	delete charizard;
+	delete azumarill;
+	delete metagross;
+	delete pikachu;
+
+	for (int i = 0; i < pokemonMenu.pokemonIcons.size(); i++)
+	{
+		// initialize them to nullptr to prevent dangling pointers
+		pokemonMenu.pokemonIcons[i] = nullptr ;
+	}
+	
+	// initialized to nullptr to prevent dangling pointers
+	selectedPokemon = nullptr;
 }
