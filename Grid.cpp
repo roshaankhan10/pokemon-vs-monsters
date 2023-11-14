@@ -9,9 +9,22 @@ std::vector<SDL_Rect> bravStates = {{11, 7, 88, 82}, {313, 10, 95, 79}, {1, 144,
 SDL_Rect pikaMover = {18,21,35,35};
 SDL_Rect bravMover = {10,13,50,50};
 
+// vector variables to store animation states of all enemies
+std::vector<SDL_Rect> thanosStates = {{252,4,232, 284}, {736,0,236, 288}, {244,292,228, 284}};
+std::vector<SDL_Rect> monster2States = {{5589, 1, 83, 78}, {5843, 0, 79, 79}, {6256, 1, 80, 157/2}};
+std::vector<SDL_Rect> monster1States = {{2289, 16, 264, 252}, {2573, 312,272 , 252}, {2269, 304, 284, 260}};
+std::vector<SDL_Rect> birdStates = {{1422, 0, 66, 47}, {1221, 48, 66,45}, {1422, 0, 66, 47}};
+std::vector<SDL_Rect> dragonStates = {{4081,0,352,352}, {4081,0,352,352}, {4081,0,352,352}};
+
+SDL_Rect monster1 = {0, 0,55, 68};
+SDL_Rect thanos = {0, 0, 70, 80};
+SDL_Rect monster2 = {0, 0, 55, 55};
+SDL_Rect bird = {0, 0,65, 75};
+SDL_Rect dragon = {0, 0, 70, 80};
+
 // initialize each tile of grid in constructor as well as pushes nullptr for each pokemon
-Grid::Grid(SDL_Texture* Texture, int x = 50, int y = 155, int w = 70, int h = 80, int rows = 5, int cols = 9)
-  : startX(x), startY(y), tileWidth(w), tileHeight(h), numRows(rows), numCols(cols), texture(Texture)
+Grid::Grid(SDL_Texture* Texture, SDL_Texture* enem, int x = 50, int y = 155, int w = 70, int h = 80, int rows = 5, int cols = 9)
+  : startX(x), startY(y), tileWidth(w), tileHeight(h), numRows(rows), numCols(cols), texture(Texture), enemyTexture(enem)
 {
   for (int i = 0; i < rows; i++){
     for(int j = 0; j < cols; j++){
@@ -26,6 +39,18 @@ Grid::Grid(SDL_Texture* Texture, int x = 50, int y = 155, int w = 70, int h = 80
 
   Pokemon* brav = new Pokemon(bravStates[0], bravMover, 50, 8, bravStates, texture);
   availablePokemons.push_back(brav);
+
+  // now insert all possible enemies
+  Enemy* thanosObj = new Enemy(thanosStates[0], thanos, 30, 4, thanosStates, enemyTexture);
+  Enemy* monster1Obj = new Enemy(monster1States[0], monster1, 30, 4, monster1States, enemyTexture);
+  Enemy* monster2Obj = new Enemy(monster2States[0], monster2, 30, 4, monster2States, enemyTexture);
+  Enemy* birdObj = new Enemy(birdStates[0], bird, 30, 4, birdStates, enemyTexture);
+  Enemy* dragonObj = new Enemy(dragonStates[0], dragon, 30, 4, dragonStates, enemyTexture);
+  possibleEnemies.push_back(thanosObj);
+  possibleEnemies.push_back(monster1Obj);
+  possibleEnemies.push_back(monster2Obj);
+  possibleEnemies.push_back(birdObj);
+  possibleEnemies.push_back(dragonObj);
 }
 
 // loops through the tiles and returns index of the tile corresponding to click, returns -1 if not found
@@ -76,6 +101,26 @@ void Grid::drawGrid(SDL_Renderer* renderer)
   }
 }
 
+// spawns an enemy in a random lane
+void Grid::spawnEnemy()
+{
+  int enemyIndex = rand() % possibleEnemies.size();
+  int lane = rand() % numRows;
+  Enemy* newEnemy = new Enemy(possibleEnemies[enemyIndex]->srcRect, {startX, startY+(lane*tileHeight), possibleEnemies[enemyIndex]->moverRect.w, possibleEnemies[enemyIndex]->moverRect.h}, possibleEnemies[enemyIndex]->atkPower, possibleEnemies[enemyIndex]->atkRange, possibleEnemies[enemyIndex]->states, possibleEnemies[enemyIndex]->texture);
+  
+  enemies.push_back(newEnemy);
+}
+
+// draws enemies 
+void Grid::drawEnemies(SDL_Renderer* renderer)
+{
+  for (int i = 0; i < enemies.size(); i++)
+  {
+    enemies[i]->moveForward();
+    enemies[i]->draw(renderer);
+  }
+}
+
 // destructor to free up heap after program ends
 Grid::~Grid()
 {
@@ -92,5 +137,11 @@ Grid::~Grid()
   {
     delete availablePokemons[j];
     availablePokemons[j] = nullptr;
+  }
+
+  for (int k = 0; k < enemies.size(); k++)
+  {
+    delete enemies[k];
+    enemies[k] = nullptr;
   }
 }

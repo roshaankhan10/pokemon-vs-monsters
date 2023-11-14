@@ -166,8 +166,7 @@ void Game::run( )
 	pokemonMenu.pokemonIcons.push_back(azumarill);
 
 	// creating grid to store all pokemon
-	// int x = 50, int y = 155, int w = 70, int h = 80, int rows = 5, int cols = 9
-	Grid grid{pokemons, 50, 155, 73, 83, 5, 9};	
+	Grid grid{pokemons, monsters, 50, 155, 73, 83, 5, 9};	
 
 	while( !quit )
 	{
@@ -194,7 +193,11 @@ void Game::run( )
 						// You can now track that selectedPokemon is being dragged
 						selectedPokemon->StartDragging();
           }
-        }
+        } 
+				else if (e.button.button == SDL_BUTTON_RIGHT)
+				{
+					grid.spawnEnemy();
+				}
       }
 			
 			// User moves a draggable object
@@ -241,6 +244,9 @@ void Game::run( )
 
 		// draws all pokemons placed on grid
 		grid.drawGrid(gRenderer);
+
+		// draws all enemies
+		grid.drawEnemies(gRenderer);
 				
 		//****************************************************************
 		SDL_RenderPresent(gRenderer); //displays the updated renderer

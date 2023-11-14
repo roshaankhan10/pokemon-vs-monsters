@@ -1,3 +1,4 @@
+#pragma once
 #include"AnimationStates.hpp"
 
 class Character: public AnimationStates

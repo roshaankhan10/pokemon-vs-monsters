@@ -2,11 +2,12 @@
 #include<iostream>
 #include<vector>
 #include"Pokemon.hpp"
+#include"Enemy.hpp"
 
 class Grid
 {
 public:
-  Grid(SDL_Texture* Texture, int x, int y, int w, int h, int rows, int cols);
+  Grid(SDL_Texture* Texture, SDL_Texture* enem, int x, int y, int w, int h, int rows, int cols);
   ~Grid();
   
   // create some methods that can be utilized in other classes and for grid itself
@@ -14,8 +15,10 @@ public:
   // for instance, to insert a new pokemon, if space in given index
   int insertIndex(int x, int y);
   void placePokemon(int x, int y, SDL_Rect src);
-
   void drawGrid(SDL_Renderer* renderer);
+
+  void spawnEnemy();
+  void drawEnemies(SDL_Renderer* renderer);
 
 private:
   // the array that will store coordinates of each tile on the grid/background
@@ -23,5 +26,8 @@ private:
   std::vector<SDL_Rect> tiles;
   std::vector<Pokemon*> pokemons;
   std::vector<Pokemon*> availablePokemons;
+  std::vector<Enemy*> enemies;
+  std::vector<Enemy*> possibleEnemies;
   SDL_Texture* texture;
+  SDL_Texture* enemyTexture;
 };
