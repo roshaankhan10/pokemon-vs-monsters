@@ -1,3 +1,5 @@
+// using pragma once to prevent redeclaration of Unit
+#pragma once
 #include<SDL.h>
 
 class Unit

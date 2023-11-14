@@ -165,6 +165,10 @@ void Game::run( )
 	pokemonMenu.pokemonIcons.push_back(pikachu);
 	pokemonMenu.pokemonIcons.push_back(azumarill);
 
+	// creating grid to store all pokemon
+	// int x = 50, int y = 155, int w = 70, int h = 80, int rows = 5, int cols = 9
+	Grid grid{pokemons, 50, 155, 73, 83, 5, 9};	
+
 	while( !quit )
 	{
 		//Handle events on queue
@@ -210,7 +214,9 @@ void Game::run( )
 				{
 					// These are the coordinates where the selectedPokemon was dropped
 					// hence, these coordinates will be utilized later to insert pokemon in grid
-					std::cout << selectedPokemon->moverRect.x << " : " << selectedPokemon->moverRect.y << std::endl;
+					int xMouse, yMouse;
+					SDL_GetMouseState(&xMouse,&yMouse);
+					grid.placePokemon(xMouse, yMouse, selectedPokemon->srcRect);
 
 					// Now we can stop dragging the selectedPokemon and return it to it's original position
 					selectedPokemon->StopDragging();
@@ -232,12 +238,15 @@ void Game::run( )
 		
 		// draws the menu, including the selectedPokemon as it is coordinates are changed by reference through selectedPokemon
 		pokemonMenu.drawMenu(gRenderer);
+
+		// draws all pokemons placed on grid
+		grid.drawGrid(gRenderer);
 				
 		//****************************************************************
 		SDL_RenderPresent(gRenderer); //displays the updated renderer
 
 		// reduced delay to 50 ms for smooth transitions
-		SDL_Delay(50);	//causes sdl engine to delay for specified miliseconds
+		SDL_Delay(120);	//causes sdl engine to delay for specified miliseconds
 	}
 
 	// free heap to prevent memory leakages

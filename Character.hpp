@@ -1,12 +1,15 @@
 #include"AnimationStates.hpp"
 
-class Character: public Unit
+class Character: public AnimationStates
 {
 public:
+  Character(SDL_Rect src, SDL_Rect mover, int power, int range, std::vector<SDL_Rect> frames, SDL_Texture* Texture);
+  // AnimationStates sprite;
+  
   virtual void gotHit() = 0;
-  AnimationStates sprite;
+  void draw(SDL_Renderer* renderer) override;
 
-private:
+// private:
   int atkPower, atkRange;
-
+  SDL_Texture* texture;
 };

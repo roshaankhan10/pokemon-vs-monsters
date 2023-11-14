@@ -1,8 +1,13 @@
 #include"Character.hpp"
-#include"Pokeball.hpp"
+// #include"Pokeball.hpp"
+
+// we need to create 5 objects of pokemon
+// we need to create constructors for this class and all classes either used here or inherited
 
 class Pokemon: public Character
 {
 public: 
-  Pokeball cost;
+  Pokemon(SDL_Rect src, SDL_Rect mover, int power, int range, std::vector<SDL_Rect> frames, SDL_Texture* Texture);
+  // Pokeball cost;
+  void gotHit() override;
 };

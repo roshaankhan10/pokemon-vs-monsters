@@ -2,6 +2,10 @@
 
 class Pokeball
 {
-  std::string ballType;
-  int amount;
+  public:
+    Pokeball(std::string ball, int amt);
+
+  // private:
+    std::string ballType;
+    int amount;
 };

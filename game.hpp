@@ -1,9 +1,11 @@
+// #pragma once
 #include"Menu.hpp"
 #include <SDL_image.h>
 #include <stdio.h>
 #include <iostream>
 #include <stdlib.h>
 #include <time.h>
+#include"Grid.hpp"
 
 class Game{
     //Screen dimension constants
