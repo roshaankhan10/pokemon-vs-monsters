@@ -10,11 +10,11 @@ SDL_Rect pikaMover = {18,21,35,35};
 SDL_Rect bravMover = {10,13,50,50};
 
 // vector variables to store animation states of all enemies
-std::vector<SDL_Rect> thanosStates = {{252,4,232, 284}, {736,0,236, 288}, {244,292,228, 284}};
-std::vector<SDL_Rect> monster2States = {{5589, 1, 83, 78}, {5843, 0, 79, 79}, {6256, 1, 80, 157/2}};
-std::vector<SDL_Rect> monster1States = {{2289, 16, 264, 252}, {2573, 312,272 , 252}, {2269, 304, 284, 260}};
-std::vector<SDL_Rect> birdStates = {{1422, 0, 66, 47}, {1221, 48, 66,45}, {1422, 0, 66, 47}};
-std::vector<SDL_Rect> dragonStates = {{4081,0,352,352}, {4081,0,352,352}, {4081,0,352,352}};
+std::vector<SDL_Rect> thanosStates = {{252,4,232, 284}, {736,0,236, 288}, {244,292,228, 284},{492,4,240,572},{8,868,232,284},{976,868,228,284},{0,1156,228,284}};
+std::vector<SDL_Rect> monster2States = {{5589, 1, 83, 78},{5759,1,81,78}, {5843, 0, 79, 79}, {5506, 1, 80, 157/2},{5506, 1, 80, 157}};//mini robot
+std::vector<SDL_Rect> monster1States = {{2289, 16, 264, 252},{2573,8,272,260}, {2269, 304, 284, 260},{2573, 312,272 , 252}};//blue octopus
+std::vector<SDL_Rect> birdStates = {{1220/3,0,201/3,47}, {1422, 0, 66, 47},{1221,48,66,45}};
+std::vector<SDL_Rect> dragonStates = {{4081,0,352,352},{4072,6,362,344},{4432,4,360,346},{4788,4,360,346},{5148,10,360,346},{3724,354,360,246},{4080,352,354,346},{4430,354,358,346},{4788,348,362,354}};
 
 SDL_Rect monster1 = {0, 0,55, 68};
 SDL_Rect thanos = {0, 0, 70, 80};
