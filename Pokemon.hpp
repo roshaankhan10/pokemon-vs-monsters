@@ -1,4 +1,5 @@
 #include"Character.hpp"
+#include"Projectile.hpp"
 // #include"Pokeball.hpp"
 
 // we need to create 5 objects of pokemon
@@ -7,7 +8,13 @@
 class Pokemon: public Character
 {
 public: 
-  Pokemon(SDL_Rect src, SDL_Rect mover, int power, int range, std::vector<SDL_Rect> frames, SDL_Texture* Texture);
+  Pokemon(SDL_Rect src, SDL_Rect mover, int power, int range, std::vector<SDL_Rect> frames, SDL_Texture* Texture, Projectile* proj);
   // Pokeball cost;
   void gotHit() override;
+  void throwProjectile();
+  void destroyProjectile();
+
+  Projectile* projectile;
+  // currProj holds currProj being used
+  Projectile* currProj;
 };

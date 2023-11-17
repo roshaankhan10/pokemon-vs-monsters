@@ -7,7 +7,7 @@
 class Grid
 {
 public:
-  Grid(SDL_Texture* Texture, SDL_Texture* enem, int x, int y, int w, int h, int rows, int cols);
+  Grid(SDL_Texture* Texture, SDL_Texture* enem, SDL_Texture* proj, int x, int y, int w, int h, int rows, int cols);
   ~Grid();
   
   // create some methods that can be utilized in other classes and for grid itself
@@ -28,6 +28,8 @@ private:
   std::vector<Pokemon*> availablePokemons;
   std::vector<Enemy*> enemies;
   std::vector<Enemy*> possibleEnemies;
+  std::vector<Projectile*> projectiles;
   SDL_Texture* texture;
   SDL_Texture* enemyTexture;
+  SDL_Texture* projTexture;
 };

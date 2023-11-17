@@ -166,7 +166,7 @@ void Game::run( )
 	pokemonMenu.pokemonIcons.push_back(azumarill);
 
 	// creating grid to store all pokemon
-	Grid grid{pokemons, monsters, 50, 155, 73, 83, 5, 9};	
+	Grid grid{pokemons, monsters, projectiles, 50, 155, 73, 83, 5, 9};	
 
 	while( !quit )
 	{

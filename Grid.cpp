@@ -22,9 +22,14 @@ SDL_Rect monster2 = {0, 0, 55, 55};
 SDL_Rect bird = {0, 0,65, 75};
 SDL_Rect dragon = {0, 0, 70, 80};
 
+// vector variable to store animation states of projectiles
+std::vector<SDL_Rect> electroBall = {{32, 43, 120, 108}, {225, 33, 120, 120}, {433, 48, 100, 96}, {615, 47, 124, 112}, {805, 37, 124, 124}};
+
+std::vector<SDL_Rect> windBlade = {{809, 246, 112, 95}, {11, 428, 168, 112}, {202, 424, 168, 112}, {391, 427, 178, 112}, {626, 426, 112, 112}, {793, 467, 147, 63}};
+
 // initialize each tile of grid in constructor as well as pushes nullptr for each pokemon
-Grid::Grid(SDL_Texture* Texture, SDL_Texture* enem, int x = 50, int y = 155, int w = 70, int h = 80, int rows = 5, int cols = 9)
-  : startX(x), startY(y), tileWidth(w), tileHeight(h), numRows(rows), numCols(cols), texture(Texture), enemyTexture(enem)
+Grid::Grid(SDL_Texture* Texture, SDL_Texture* enem, SDL_Texture* proj, int x = 50, int y = 155, int w = 70, int h = 80, int rows = 5, int cols = 9)
+  : startX(x), startY(y), tileWidth(w), tileHeight(h), numRows(rows), numCols(cols), texture(Texture), enemyTexture(enem), projTexture(proj)
 {
   for (int i = 0; i < rows; i++){
     for(int j = 0; j < cols; j++){
@@ -33,11 +38,18 @@ Grid::Grid(SDL_Texture* Texture, SDL_Texture* enem, int x = 50, int y = 155, int
     }
   }
 
+  // create all projectiles
+  // Projectile(SDL_Rect src, SDL_Rect mover, std::vector<SDL_Rect> frames, SDL_Texture* Texture)
+  Projectile* electroBallPtr = new Projectile(electroBall[0], {800,300,50,50}, electroBall, projTexture);
+  projectiles.push_back(electroBallPtr);
+  Projectile* windBladePtr = new Projectile(windBlade[0], {750,500,50,50}, windBlade, projTexture);
+  projectiles.push_back(windBladePtr);
+
   // now insert all available pokemon pointers
-  Pokemon* pika = new Pokemon(pikaStates[0], pikaMover, 30, 4, pikaStates, texture);
+  Pokemon* pika = new Pokemon(pikaStates[0], pikaMover, 30, 4, pikaStates, texture, electroBallPtr);
   availablePokemons.push_back(pika);
 
-  Pokemon* brav = new Pokemon(bravStates[0], bravMover, 50, 8, bravStates, texture);
+  Pokemon* brav = new Pokemon(bravStates[0], bravMover, 50, 8, bravStates, texture, windBladePtr);
   availablePokemons.push_back(brav);
 
   // now insert all possible enemies
@@ -79,7 +91,7 @@ void Grid::placePokemon(int x, int y, SDL_Rect src)
     {
       if (src.x == availablePokemons[j]->srcRect.x && src.y == availablePokemons[j]->srcRect.y)
       {
-        Pokemon* newPokemon = new Pokemon(src, {tiles[index].x + availablePokemons[j]->moverRect.x, tiles[index].y + availablePokemons[j]->moverRect.y, availablePokemons[j]->moverRect.w, availablePokemons[j]->moverRect.h}, availablePokemons[j]->atkPower, availablePokemons[j]->atkRange, availablePokemons[j]->states, availablePokemons[j]->texture);
+        Pokemon* newPokemon = new Pokemon(src, {tiles[index].x + availablePokemons[j]->moverRect.x, tiles[index].y + availablePokemons[j]->moverRect.y, availablePokemons[j]->moverRect.w, availablePokemons[j]->moverRect.h}, availablePokemons[j]->atkPower, availablePokemons[j]->atkRange, availablePokemons[j]->states, availablePokemons[j]->texture, availablePokemons[j]->projectile);
         
         pokemons[index] = newPokemon;
 
@@ -97,6 +109,22 @@ void Grid::drawGrid(SDL_Renderer* renderer)
     if (pokemons[i] != nullptr)
     {
       pokemons[i]->draw(renderer);
+      // if pokemon's projectile is not being thrown, throw it
+      if (pokemons[i]->currProj == nullptr)
+      {
+        pokemons[i]->throwProjectile();
+      }
+      else 
+      {
+        // if it's being thrown, draw it
+        pokemons[i]->currProj->draw(renderer);
+
+        // if it exceeds boundary, destroy it
+        if (pokemons[i]->currProj->moverRect.x <= 10)
+        {
+          pokemons[i]->destroyProjectile();
+        }
+      }
     }
   }
 }
@@ -128,6 +156,8 @@ Grid::~Grid()
   {
     if (pokemons[i] != nullptr)
     {
+      // delete curr porjectile
+      pokemons[i]->destroyProjectile(); 
       delete pokemons[i];
       pokemons[i] = nullptr;
     }
@@ -143,5 +173,11 @@ Grid::~Grid()
   {
     delete enemies[k];
     enemies[k] = nullptr;
+  }
+
+  for (int l = 0; l < projectiles.size(); l++)
+  {
+    delete projectiles[l];
+    projectiles[l] = nullptr;
   }
 }
