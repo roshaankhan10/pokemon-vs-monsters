@@ -8,7 +8,7 @@
 class Pokemon: public Character
 {
 public: 
-  Pokemon(SDL_Rect src, SDL_Rect mover, int power, int range, std::vector<SDL_Rect> frames, SDL_Texture* Texture, Projectile* proj);
+  Pokemon(SDL_Rect src, SDL_Rect mover, int power, int range, std::vector<SDL_Rect> frames, SDL_Texture* Texture, Projectile* proj, int health);
   // Pokeball cost;
   void gotHit() override;
   void throwProjectile();

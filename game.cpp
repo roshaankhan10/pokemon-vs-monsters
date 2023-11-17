@@ -236,6 +236,7 @@ void Game::run( )
 		//***********************draw the objects here********************
 		
     // Create a rectangle with white color 
+		SDL_SetRenderDrawColor( gRenderer, 0xFF, 0xFF, 0xFF, 0xFF );
     SDL_Rect whiteRect = {240, 30, 300, 60};
     SDL_RenderFillRect(gRenderer, &whiteRect);
 		

@@ -1,7 +1,7 @@
 #include"Pokemon.hpp"
 
-Pokemon::Pokemon(SDL_Rect src, SDL_Rect mover, int power, int range, std::vector<SDL_Rect> frames, SDL_Texture* Texture, Projectile* proj)
-  :Character(src, mover, power, range, frames, Texture), projectile(proj), currProj(nullptr)
+Pokemon::Pokemon(SDL_Rect src, SDL_Rect mover, int power, int range, std::vector<SDL_Rect> frames, SDL_Texture* Texture, Projectile* proj, int health)
+  :Character(src, mover, power, range, frames, Texture, health), projectile(proj), currProj(nullptr)
 {}
 
 void Pokemon::gotHit()
