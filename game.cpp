@@ -154,10 +154,10 @@ void Game::run( )
 	
 	// creates draggable objects for each pokemon and push in pokemonMenu's icons
 	DraggableObject* braviary = new DraggableObject(pokemons, {11, 7, 88, 82}, {250, 40, 50, 50});
-	DraggableObject* charizard = new DraggableObject(pokemons, {597, 8, 74, 81}, {310, 30, 60, 60});
+	DraggableObject* charizard = new DraggableObject(pokemons, {511,5,75,85}, {310, 30, 60, 60});
 	DraggableObject* metagross = new DraggableObject(pokemons, {949, 6, 77, 52}, {380, 50, 60, 40});
 	DraggableObject* pikachu = new DraggableObject(pokemons, {1365, 0, 39, 46}, {450, 50, 35, 35});
-	DraggableObject* azumarill = new DraggableObject(pokemons, {1621, 2, 58, 59}, {490, 40, 50, 50});
+	DraggableObject* azumarill = new DraggableObject(pokemons, {1619,2,61,60}, {490, 40, 50, 50});
 	
 	pokemonMenu.pokemonIcons.push_back(braviary);
 	pokemonMenu.pokemonIcons.push_back(charizard);
