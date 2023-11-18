@@ -18,7 +18,9 @@ public:
   void drawGrid(SDL_Renderer* renderer);
 
   void spawnEnemy();
+  void shouldEnemySpawn();
   void drawEnemies(SDL_Renderer* renderer);
+  void cleanCharacters();
 
 private:
   // the array that will store coordinates of each tile on the grid/background
@@ -32,4 +34,8 @@ private:
   SDL_Texture* texture;
   SDL_Texture* enemyTexture;
   SDL_Texture* projTexture;
+  int currCap = 0; // stores capacity of current enemies
+  int spawnInterval = 5000; // stores interval in ms between successive spawns, rn set to 5s
+  uint32_t lastSpawnTime = 0; // stores time in ms when last spawn occurred
+  int enemiesKilled = 0; // stored count of enemies killed in the particular wave
 };

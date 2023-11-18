@@ -194,10 +194,7 @@ void Game::run( )
 						selectedPokemon->StartDragging();
           }
         } 
-				else if (e.button.button == SDL_BUTTON_RIGHT)
-				{
-					grid.spawnEnemy();
-				}
+				// enemy no longer spawn due to right click
       }
 			
 			// User moves a draggable object
@@ -243,8 +240,14 @@ void Game::run( )
 		// draws the menu, including the selectedPokemon as it is coordinates are changed by reference through selectedPokemon
 		pokemonMenu.drawMenu(gRenderer);
 
+		// clears all dead characters
+		grid.cleanCharacters();
+
 		// draws all pokemons placed on grid
 		grid.drawGrid(gRenderer);
+
+		// spawn enemy randomly
+		grid.shouldEnemySpawn();
 
 		// draws all enemies
 		grid.drawEnemies(gRenderer);

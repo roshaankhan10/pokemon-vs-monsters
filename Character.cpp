@@ -10,3 +10,9 @@ void Character::draw(SDL_Renderer* renderer)
   AnimationStates::updateFrame();
   SDL_RenderCopy(renderer, texture, &srcRect, &moverRect);
 }
+
+bool Character::isDead()
+{
+  // if health is 0 or less, it has died, e=hence true. otheriwse false
+  return health.currHealth <= 0; 
+}
