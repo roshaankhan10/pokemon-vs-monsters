@@ -5,9 +5,18 @@ std::vector<SDL_Rect> pikaStates = {{1365, 0, 39, 46}, {1465, 0, 40, 46}, {1513,
 
 std::vector<SDL_Rect> bravStates = {{11, 7, 88, 82}, {313, 10, 95, 79}, {1, 144, 95, 55}, {103, 144, 95, 55}, {215, 152, 88, 54}, {422, 151, 81, 62}, {14, 261, 81, 62}, {102, 249, 97, 59}};
 
+std::vector<SDL_Rect> charStates = {{511,5,75,85},{597,5,75,85},{684,5,75,85},{772,5,75,85},{859,5,75,85},{506,90,75,85},{597,90,75,85},{684,90,75,85},{772,90,75,85},{859,90,75,85},{506,178,75,88},{597,178,75,88},{684,178,75,88},{772,178,75,88},{859,178,75,88},{508,267,75,85},{597,267,75,85},{684,267,75,85},{772,267,75,85},{859,267,75,85}};
+
+std::vector<SDL_Rect> metaStates = {{949,6,80,52},{1032,6,80,52},{1115,6,80,52},{1198,6,80,52},{1281,6,80,52},{949,64,80,52},{1032,64,80,52},{1115,64,80,52},{1198,64,80,52},{1281,64,80,52},{949,122,80,52},{1032,122,80,52},{1115,122,80,52},{1198,122,80,52},{1281,122,80,52},{949,180,80,52},{1032,180,80,52},{1115,180,80,52},{1198,180,80,52},{1281,180,80,52},{949,238,80,52},{1032,238,80,52},{1115,238,80,52},{1198,238,80,52},{1281,238,80,52},{949,296,80,52},{1032,296,80,52},{1115,296,80,52},{1198,296,80,52},{1281,296,80,52},{949,354,80,52},{1032,354,80,52},{1115,354,80,52},{1198,354,80,52},{1281,354,80,52}};
+
+std::vector<SDL_Rect> azuStates = {{1619,2,61,60},{1692,2,65,60},{1765,2,65,60},{1838,2,65,60},{1911,2,65,60},{1619,66,61,60},{1692,65,65,60},{1765,65,65,60},{1838,63,65,60},{1911,63,65,60},{1619,124,61,60},{1692,125,65,60},{1765,126,65,60},{1838,128,65,60},{1911,126,65,60},{1619,186,61,60},{1692,185,65,60}};
+
 // stores respective display setting of each mover to be used when creating new pokemon
 SDL_Rect pikaMover = {18,21,35,35};
 SDL_Rect bravMover = {10,13,50,50};
+SDL_Rect charMover = {3, 3, 65, 65};
+SDL_Rect metaMover = {5,10,65,45};
+SDL_Rect azuMover = {10,10,50,50};
 
 // vector variables to store animation states of all enemies
 std::vector<SDL_Rect> thanosStates = {{252,4,232, 284}, {736,0,236, 288}, {244,292,228, 284}};
@@ -50,6 +59,15 @@ Grid::Grid(SDL_Texture* Texture, SDL_Texture* enem, SDL_Texture* proj, int x = 5
 
   Pokemon* brav = new Pokemon(bravStates[0], bravMover, 50, 8, bravStates, texture, windBladePtr, 80);
   availablePokemons.push_back(brav);
+
+  Pokemon* charz = new Pokemon(charStates[0], charMover,50,8,charStates, texture ,windBladePtr,100);
+  availablePokemons.push_back(charz);
+
+  Pokemon* meta = new Pokemon(metaStates[0],metaMover,50,8,metaStates,texture,electroBallPtr,100);
+  availablePokemons.push_back(meta);
+
+  Pokemon* azu = new Pokemon(azuStates[0], azuMover,50,8,azuStates,texture,electroBallPtr,50);
+  availablePokemons.push_back(azu);
 
   // now insert all possible enemiesm, in order of weak to strong, i.e. weak inserted at lower index
   Enemy* southpawObj = new Enemy(southpawStates[0], southpaw, 10, 1, 3, southpawStates, enemyTexture, 70);
