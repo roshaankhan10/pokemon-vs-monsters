@@ -32,9 +32,15 @@ SDL_Rect bird = {0, 0,65, 75};
 SDL_Rect dragon = {0, 0, 70, 80};
 
 // vector variable to store animation states of projectiles
-std::vector<SDL_Rect> electroBall = {{32, 43, 120, 108}, {225, 33, 120, 120}, {433, 48, 100, 96}, {615, 47, 124, 112}, {805, 37, 124, 124}};
+std::vector<SDL_Rect> electroBall = {{1457,98,42,42},{1375,97,40,44},{1295,98,46,45},{1211,92,52,51},{1535,15,50,54},{1455,18,54,50},{1379,19,44,42},{1292,12,53,53},{1211,17,53,47}};
 
-std::vector<SDL_Rect> windBlade = {{809, 246, 112, 95}, {11, 428, 168, 112}, {202, 424, 168, 112}, {391, 427, 178, 112}, {626, 426, 112, 112}, {793, 467, 147, 63}};
+std::vector<SDL_Rect> windBlade = {{1284,176,70,47},{1362,177,76,45},{1461,176,48,49},{1530,191,63,31}};
+
+std::vector<SDL_Rect> fireRing = {{13,19,56,42},{93,20,54,42},{173,20,54,41},{253,19,54,43}};
+
+std::vector<SDL_Rect> whirlpool = {{747,140,29,21},{667,132,28,29},{587,125,30,36},{508,126,29,35},{427,127,29,34},{747,48,29,33},{667,48,28,33},{587,48,30,33},{508,52,29,29},{427,57,29,24}};
+
+std::vector<SDL_Rect> purpleRing = {{1133,172,58,57},{1057,175,50,49},{977,175,50,49},{897,175,50,49},{803,168,73,75},{897,175,50,49},{1042,80,80,80},{965,82,75,76},{882,79,73,79},{803,79,73,82},{1120,7,71,62},{1042,0,80,78},{971,0,80,78},{885,0,80,78},{814,0,80,78}};
 
 // initialize each tile of grid in constructor as well as pushes nullptr for each pokemon
 Grid::Grid(SDL_Texture* Texture, SDL_Texture* enem, SDL_Texture* proj, int x = 50, int y = 155, int w = 70, int h = 80, int rows = 5, int cols = 9)
@@ -52,6 +58,12 @@ Grid::Grid(SDL_Texture* Texture, SDL_Texture* enem, SDL_Texture* proj, int x = 5
   projectiles.push_back(electroBallPtr);
   Projectile* windBladePtr = new Projectile(windBlade[0], {0,0,40,40}, windBlade, projTexture);
   projectiles.push_back(windBladePtr);
+  Projectile* fireRingPtr = new Projectile(fireRing[0],{0,0,40,40},fireRing,projTexture);
+  projectiles.push_back(fireRingPtr);
+  Projectile* whirlpoolPtr = new Projectile(whirlpool[0],{0,0,40,40},whirlpool,projTexture);
+  projectiles.push_back(whirlpoolPtr);
+  Projectile* purpleRingPtr = new Projectile(purpleRing[0],{0,0,40,40},purpleRing,projTexture);
+  projectiles.push_back(purpleRingPtr);
 
   // now insert all available pokemon pointers
   Pokemon* pika = new Pokemon(pikaStates[0], pikaMover, 30, 4, pikaStates, texture, electroBallPtr, 50);
@@ -60,13 +72,13 @@ Grid::Grid(SDL_Texture* Texture, SDL_Texture* enem, SDL_Texture* proj, int x = 5
   Pokemon* brav = new Pokemon(bravStates[0], bravMover, 50, 8, bravStates, texture, windBladePtr, 80);
   availablePokemons.push_back(brav);
 
-  Pokemon* charz = new Pokemon(charStates[0], charMover,50,8,charStates, texture ,windBladePtr,100);
+  Pokemon* charz = new Pokemon(charStates[0], charMover,50,8,charStates, texture ,fireRingPtr,100);
   availablePokemons.push_back(charz);
 
-  Pokemon* meta = new Pokemon(metaStates[0],metaMover,50,8,metaStates,texture,electroBallPtr,100);
+  Pokemon* meta = new Pokemon(metaStates[0],metaMover,50,8,metaStates,texture,purpleRingPtr,100);
   availablePokemons.push_back(meta);
 
-  Pokemon* azu = new Pokemon(azuStates[0], azuMover,50,8,azuStates,texture,electroBallPtr,50);
+  Pokemon* azu = new Pokemon(azuStates[0], azuMover,50,8,azuStates,texture,whirlpoolPtr,50);
   availablePokemons.push_back(azu);
 
   // now insert all possible enemiesm, in order of weak to strong, i.e. weak inserted at lower index
