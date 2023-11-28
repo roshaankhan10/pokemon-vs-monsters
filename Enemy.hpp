@@ -10,4 +10,6 @@ class Enemy: public Character
 
   // private:
     int pointsDrop, movingSpeed;
+    bool isHit = false;
+    SDL_Rect empty = {0,0,0,0};
 };

@@ -12,11 +12,15 @@ void Pokemon::gotHit()
 // this function will create a new projectile
 void Pokemon::throwProjectile()
 {
-  currProj = new Projectile(*projectile);
+  // find diff bw prev throw and curr time, only create new projectile if difference greater than 1.5s
+  if (SDL_GetTicks() - elapsedTime > 1500)
+    currProj = new Projectile(*projectile);
 }
 
 void Pokemon::destroyProjectile()
 {
   delete currProj;
   currProj = nullptr;
+  // update elapsedTime as it'll be used for next projectile throw
+  elapsedTime = SDL_GetTicks();
 }

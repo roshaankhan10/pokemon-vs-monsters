@@ -14,4 +14,6 @@ void Enemy::moveForward()
 void Enemy::gotHit()
 {
   // implementation to be done after projectiles are made
+  health.currHealth -= 5;
+  isHit = true;
 }

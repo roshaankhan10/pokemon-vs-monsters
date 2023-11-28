@@ -17,4 +17,7 @@ public:
   Projectile* projectile;
   // currProj holds currProj being used
   Projectile* currProj;
+
+  // stores timestamp at which last projectile died
+  uint32_t elapsedTime = SDL_GetTicks();
 };

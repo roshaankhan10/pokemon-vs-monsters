@@ -38,4 +38,7 @@ private:
   int spawnInterval = 5000; // stores interval in ms between successive spawns, rn set to 5s
   uint32_t lastSpawnTime = 0; // stores time in ms when last spawn occurred
   int enemiesKilled = 0; // stored count of enemies killed in the particular wave
+
+  bool checkCollision(const SDL_Rect& rect1, const SDL_Rect& rect2); 
+
 };

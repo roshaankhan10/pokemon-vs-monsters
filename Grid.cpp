@@ -20,7 +20,8 @@ SDL_Rect azuMover = {10,10,50,50};
 
 // vector variables to store animation states of all enemies
 std::vector<SDL_Rect> thanosStates = {{252,4,232, 284}, {736,0,236, 288}, {244,292,228, 284}};
-std::vector<SDL_Rect> southpawStates = {{5589, 1, 83, 78}, {5843, 0, 79, 79}, {6256, 1, 80, 157/2}};
+// std::vector<SDL_Rect> southpawStates = {{5589, 1, 83, 78}, {5843, 0, 79, 79}, {6256, 1, 80, 157/2}};
+std::vector<SDL_Rect> southpawStates = {{5589, 1, 83, 78}, {5675, 1, 82, 78}, {5759, 1, 81, 78}, {5843, 0, 79, 79}};
 std::vector<SDL_Rect> jellaquidStates = {{2289, 16, 264, 252}, {2573, 312,272 , 252}, {2269, 304, 284, 260}};
 std::vector<SDL_Rect> birdStates = {{1422, 0, 66, 47}, {1221, 48, 66,45}, {1422, 0, 66, 47}};
 std::vector<SDL_Rect> dragonStates = {{4081,0,352,352}, {4076,6,362,344}, {4432,4,360,346}, {4788,4,360,346}, {5148,10,360,346}, {3724,354,360,346}, {4080,352,354,346}, {4430,354,358,346}, {4788,348,362,354}};
@@ -133,6 +134,18 @@ void Grid::placePokemon(int x, int y, SDL_Rect src)
   }
 }
 
+bool Grid::checkCollision(const SDL_Rect& rect1, const SDL_Rect& rect2) 
+{
+    // Check for horizontal collision
+    bool horizontalCollision = (rect1.x < rect2.x + rect2.w) && (rect1.x + rect1.w > rect2.x);
+
+    // Check for vertical collision
+    bool verticalCollision = (rect1.y < rect2.y + rect2.h) && (rect1.y + rect1.h > rect2.y);
+
+    // Return true if both horizontal and vertical collisions occur
+    return horizontalCollision && verticalCollision;
+}
+
 // iterates over the grid and draws all pokemon on that grid
 void Grid::drawGrid(SDL_Renderer* renderer)
 {
@@ -147,12 +160,32 @@ void Grid::drawGrid(SDL_Renderer* renderer)
         // if it's being thrown, draw it
         pokemons[i]->currProj->draw(renderer);
 
-        // if it exceeds boundary, destroy it
-        if (pokemons[i]->currProj->moverRect.x <= 10)
+        // checks if projectile destroyed or not
+        bool destroyed = false;
+
+        // check collision with enemy
+        for (int j = 0; j < enemies.size(); j++)
         {
-          pokemons[i]->destroyProjectile();
-          // reducing health when projectile goes offscreen to see health depletion
-          pokemons[i]->health.currHealth -= 5;
+          if (checkCollision(pokemons[i]->currProj->moverRect, enemies[j]->moverRect))
+          {
+            // std::cout << "Collision detected" << std::endl;
+            pokemons[i]->destroyProjectile();
+            enemies[j]->gotHit();
+            destroyed = true;
+            break;
+          }
+        }
+
+        // check boundary condition only if projectile not destroyed
+        if (!destroyed)
+        {
+          // if it exceeds boundary, destroy it
+          if (pokemons[i]->currProj->moverRect.x <= 10)
+          {
+            pokemons[i]->destroyProjectile();
+            // reducing health when projectile goes offscreen to see health depletion
+            pokemons[i]->health.currHealth -= 5;
+          }
         }
       }
       // if pokemon's projectile is not being thrown, throw it
@@ -226,10 +259,25 @@ void Grid::drawEnemies(SDL_Renderer* renderer)
 {
   for (int i = 0; i < enemies.size(); i++)
   {
-    enemies[i]->moveForward();
+    // only move forward if there is no pokemon ahead
+    if (pokemons[insertIndex(enemies[i]->moverRect.x + enemies[i]->moverRect.w + 30, enemies[i]->moverRect.y)] == nullptr)
+    {
+      enemies[i]->moveForward();
+    }
     // moves health bar of enemy along with it
     enemies[i]->health.moverRect.x = enemies[i]->moverRect.x;
-    enemies[i]->draw(renderer);
+
+    // if got hit, then blink, else normally drae enemy
+    if (enemies[i]->isHit)
+    {   
+      SDL_RenderCopy(renderer, enemyTexture, &enemies[i]->empty, &enemies[i]->moverRect);
+      enemies[i]->isHit = false;
+    }
+    else
+    {
+      enemies[i]->draw(renderer);
+    } 
+
     enemies[i]->health.draw(renderer);
   }
 }
