@@ -8,16 +8,17 @@
 class Pokemon: public Character
 {
 public: 
-  Pokemon(SDL_Rect src, SDL_Rect mover, int power, int range, std::vector<SDL_Rect> frames, SDL_Texture* Texture, Projectile* proj, int health);
+  Pokemon(SDL_Rect src, SDL_Rect mover, int power, int range, std::vector<SDL_Rect> frames, SDL_Texture* Texture, Projectile proj, int health);
   // Pokeball cost;
   void gotHit() override;
   void throwProjectile();
   void destroyProjectile();
 
-  Projectile* projectile;
-  // currProj holds currProj being used
-  Projectile* currProj;
-
+  Projectile projectile;
+  
+  // flag to check if pokemon's projectile is being thrown or not
+  bool isThrown = false; 
+  
   // stores timestamp at which last projectile died
   uint32_t elapsedTime = SDL_GetTicks();
 };

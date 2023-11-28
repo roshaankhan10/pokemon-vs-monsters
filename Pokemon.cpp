@@ -1,7 +1,7 @@
 #include"Pokemon.hpp"
 
-Pokemon::Pokemon(SDL_Rect src, SDL_Rect mover, int power, int range, std::vector<SDL_Rect> frames, SDL_Texture* Texture, Projectile* proj, int health)
-  :Character(src, mover, power, range, frames, Texture, health), projectile(proj), currProj(nullptr)
+Pokemon::Pokemon(SDL_Rect src, SDL_Rect mover, int power, int range, std::vector<SDL_Rect> frames, SDL_Texture* Texture, Projectile proj, int health)
+  :Character(src, mover, power, range, frames, Texture, health), projectile(proj)
 {}
 
 void Pokemon::gotHit()
@@ -14,13 +14,16 @@ void Pokemon::throwProjectile()
 {
   // find diff bw prev throw and curr time, only create new projectile if difference greater than 1.5s
   if (SDL_GetTicks() - elapsedTime > 1500)
-    currProj = new Projectile(*projectile);
+  {
+    isThrown = true;
+    projectile.moverRect = {moverRect.x-20, moverRect.y, 35, 35};
+  }
 }
 
 void Pokemon::destroyProjectile()
 {
-  delete currProj;
-  currProj = nullptr;
+  isThrown = false;
+  projectile.moverRect = {0,0,0,0};
   // update elapsedTime as it'll be used for next projectile throw
   elapsedTime = SDL_GetTicks();
 }
