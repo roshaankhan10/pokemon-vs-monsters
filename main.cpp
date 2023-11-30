@@ -15,6 +15,10 @@ int main(int argc, char *argv[]){
         return 0;
     }
 
+    // if (game.StartScreen() == false){
+    //     game.close();
+    // }
+
     // after initializing and loading, start running the game
     game.run();
 

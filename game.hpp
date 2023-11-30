@@ -1,4 +1,4 @@
-// #pragma once
+#pragma once
 #include"Menu.hpp"
 #include <SDL_image.h>
 #include <SDL_ttf.h>
@@ -34,6 +34,7 @@ class Game{
 
 public:
 
+    void StartScreen();
     bool init();
     bool loadMedia();
     void close();
