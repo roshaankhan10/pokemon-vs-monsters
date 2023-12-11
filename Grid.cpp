@@ -1,5 +1,13 @@
 #include"Grid.hpp"
+#include<iostream>
 
+
+// 
+void Grid::Home_Health(Castle& castle, Projectile& enemyProjectile) {
+    
+    castle.decreaseHealth(enemyProjectile.getDamage());
+    
+}
 // vector variables to store all animation states
 std::vector<SDL_Rect> pikaStates = {{1365, 0, 39, 46}, {1465, 0, 40, 46}, {1513, 2, 44, 45}, {1562, 3, 46, 44}, {1362, 49, 48, 45}, {1411, 49, 47, 45}, {1463, 48, 44, 44}, {1562, 95, 46, 44}, {1413, 140, 43, 44}, {1413, 186, 43, 45}, {1510, 187, 47, 44}, {1363, 232, 42, 44}, {1413, 186+44, 43, 45}, {1363, 278, 44, 44}, {1462, 279, 48, 44}};
 
@@ -32,7 +40,7 @@ SDL_Rect southpaw = {0, 0, 55, 55};
 SDL_Rect bird = {0, 0,65, 75};
 SDL_Rect dragon = {0, 0, 70, 80};
 
-// vector variable to store animation states of projectiles
+// vector variable to store animation states of projectiles of pokemon
 std::vector<SDL_Rect> electroBall = {{1457,98,42,42},{1375,97,40,44},{1295,98,46,45},{1211,92,52,51},{1535,15,50,54},{1455,18,54,50},{1379,19,44,42},{1292,12,53,53},{1211,17,53,47}};
 
 std::vector<SDL_Rect> windBlade = {{1284,176,70,47},{1362,177,76,45},{1461,176,48,49},{1530,191,63,31}};
@@ -43,9 +51,18 @@ std::vector<SDL_Rect> whirlpool = {{747,140,29,21},{667,132,28,29},{587,125,30,3
 
 std::vector<SDL_Rect> purpleRing = {{1133,172,58,57},{1057,175,50,49},{977,175,50,49},{897,175,50,49},{803,168,73,75},{897,175,50,49},{1042,80,80,80},{965,82,75,76},{882,79,73,79},{803,79,73,82},{1120,7,71,62},{1042,0,80,78},{971,0,80,78},{885,0,80,78},{814,0,80,78}};
 
+
+// vector variable to store animation states of projectiles of enemies
+std::vector<SDL_Rect> dragonFlame = {{1,8,132,143},{193,10,132,143},{378,4,132,143},{572,0,132,143},{762,1,132,143}};
+std::vector<SDL_Rect> jellaquidBall = {{1468,24,179,160},{1279,25,179,160},{1085,25,179,160},{894,26,179,160},{1085,25,179,160},{1279,25,179,160}};
+std::vector<SDL_Rect> southpawBall = {{3136,16,168,195},{2939,16,168,195},{2752,23,168,195}};
+std::vector<SDL_Rect> birdBall = {{2213,5,179,160},{2406,5,179,160},{2589,6,179,160},{1825,187,179,160},{2016,192,179,160},{2203,190,179,160},{2388,192,179,160}};
+// std::vector<SDL_Rect> thanosBall = {{2392,30,90,90},{3485,27,90,90},{3679,26,90,90},{3871,28,90,90}};
+std::vector<SDL_Rect> thanosBall = {{3311,53,54,42},{3501,47,60,54},{3695,49,58,48},{3897,51,38,44}};
+
 // initialize each tile of grid in constructor as well as pushes nullptr for each pokemon
-Grid::Grid(SDL_Texture* Texture, SDL_Texture* enem, SDL_Texture* proj, SDL_Texture* pokes, int x = 50, int y = 155, int w = 70, int h = 80, int rows = 5, int cols = 9)
-  : startX(x), startY(y), tileWidth(w), tileHeight(h), numRows(rows), numCols(cols), texture(Texture), enemyTexture(enem), projTexture(proj), pokeballTexture(pokes), stats({}, {}, pokes)
+Grid::Grid(SDL_Texture* Texture, SDL_Texture* enem, SDL_Texture* proj, SDL_Texture* projE, int x = 50, int y = 155, int w = 70, int h = 80, int rows = 5, int cols = 9)
+  : startX(x), startY(y), tileWidth(w), tileHeight(h), numRows(rows), numCols(cols), texture(Texture), enemyTexture(enem), projTexture(proj), projTextureE(projE)
 {
   for (int i = 0; i < rows; i++){
     for(int j = 0; j < cols; j++){
@@ -54,7 +71,7 @@ Grid::Grid(SDL_Texture* Texture, SDL_Texture* enem, SDL_Texture* proj, SDL_Textu
     }
   }
 
-  // create all projectiles
+  // create all projectiles for pokemon
   Projectile* electroBallPtr = new Projectile(electroBall[0], {0,0,35,35}, electroBall, projTexture);
   projectiles.push_back(electroBallPtr);
   Projectile* windBladePtr = new Projectile(windBlade[0], {0,0,40,40}, windBlade, projTexture);
@@ -66,32 +83,49 @@ Grid::Grid(SDL_Texture* Texture, SDL_Texture* enem, SDL_Texture* proj, SDL_Textu
   Projectile* purpleRingPtr = new Projectile(purpleRing[0],{0,0,40,40},purpleRing,projTexture);
   projectiles.push_back(purpleRingPtr);
 
+  // create all projectiles for enemies
+  Projectile* dragonFlamePtr = new Projectile(dragonFlame[0], {0,0,35,35}, dragonFlame, projTextureE);
+  projectiles.push_back(dragonFlamePtr);
+  Projectile* jellaquidBallPtr = new Projectile(jellaquidBall[0], {0,0,40,40}, jellaquidBall, projTextureE);
+  projectiles.push_back(jellaquidBallPtr);
+  Projectile* southpawBallPtr = new Projectile(southpawBall[0],{0,0,40,40},southpawBall,projTextureE);
+  projectiles.push_back(southpawBallPtr);
+  Projectile* birdStatesPtr = new Projectile(birdBall[0],{0,0,40,40},birdBall,projTextureE);
+  projectiles.push_back(birdStatesPtr);
+  Projectile* thanosStatesPtr = new Projectile(thanosBall[0],{0,0,40,40},thanosBall,projTextureE);
+  projectiles.push_back(thanosStatesPtr);
+
+
   // now insert all available pokemon pointers
-  Pokemon* pika = new Pokemon(pikaStates[0], pikaMover, 30, 4, pikaStates, texture, *electroBallPtr, 50);
+  Pokemon* pika = new Pokemon(pikaStates[0], pikaMover, 30, 4, pikaStates, texture, electroBallPtr, 50);
   availablePokemons.push_back(pika);
 
-  Pokemon* brav = new Pokemon(bravStates[0], bravMover, 50, 8, bravStates, texture, *windBladePtr, 80);
+  Pokemon* brav = new Pokemon(bravStates[0], bravMover, 50, 8, bravStates, texture, windBladePtr, 80);
   availablePokemons.push_back(brav);
 
-  Pokemon* charz = new Pokemon(charStates[0], charMover,50,8,charStates, texture ,*fireRingPtr,100);
+  Pokemon* charz = new Pokemon(charStates[0], charMover,50,8,charStates, texture ,fireRingPtr,100);
   availablePokemons.push_back(charz);
 
-  Pokemon* meta = new Pokemon(metaStates[0],metaMover,50,8,metaStates,texture,*purpleRingPtr,100);
+  Pokemon* meta = new Pokemon(metaStates[0],metaMover,50,8,metaStates,texture,purpleRingPtr,100);
   availablePokemons.push_back(meta);
 
-  Pokemon* azu = new Pokemon(azuStates[0], azuMover,50,8,azuStates,texture,*whirlpoolPtr,50);
+  Pokemon* azu = new Pokemon(azuStates[0], azuMover,50,8,azuStates,texture,whirlpoolPtr,50);
   availablePokemons.push_back(azu);
 
-  // now insert all possible enemiesm, in order of weak to strong, i.e. weak inserted at lower index
-  Enemy* southpawObj = new Enemy(southpawStates[0], southpaw, 10, 1, 3, southpawStates, enemyTexture, 70, 3);
-  Enemy* birdObj = new Enemy(birdStates[0], bird, 7, 4, 6, birdStates, enemyTexture, 60, 5);
-  Enemy* jellaquidObj = new Enemy(jellaquidStates[0], jellaquid, 10, 6, 4, jellaquidStates, enemyTexture, 100, 10);
-  Enemy* thanosObj = new Enemy(thanosStates[0], thanos, 18, 3, 1, thanosStates, enemyTexture, 200, 16);
-  Enemy* dragonObj = new Enemy(dragonStates[0], dragon, 30, 2, 2, dragonStates, enemyTexture, 180, 25);
+  // now insert all possible enemies, in order of weak to strong, i.e. weak inserted at lower index
+  Enemy* southpawObj = new Enemy(southpawStates[0], southpaw, 10, 1, 3, southpawStates, enemyTexture, southpawBallPtr, 70);
   possibleEnemies.push_back(southpawObj);
+
+  Enemy* birdObj = new Enemy(birdStates[0], bird, 7, 4, 6, birdStates, enemyTexture, birdStatesPtr, 60);
   possibleEnemies.push_back(birdObj);
+
+  Enemy* jellaquidObj = new Enemy(jellaquidStates[0], jellaquid, 10, 6, 4, jellaquidStates, enemyTexture, jellaquidBallPtr, 100);
   possibleEnemies.push_back(jellaquidObj);
+
+  Enemy* thanosObj = new Enemy(thanosStates[0], thanos, 29, 3, 1, thanosStates, enemyTexture, thanosStatesPtr, 200);
   possibleEnemies.push_back(thanosObj);
+  
+  Enemy* dragonObj = new Enemy(dragonStates[0], dragon, 30, 2, 2, dragonStates, enemyTexture, dragonFlamePtr, 180);
   possibleEnemies.push_back(dragonObj);
 }
 
@@ -109,7 +143,7 @@ int Grid::insertIndex(int x, int y)
 }
 
 // places pokemon on grid if click was valid
-bool Grid::placePokemon(int x, int y, SDL_Rect src)
+void Grid::placePokemon(int x, int y, SDL_Rect src)
 {
   int index = insertIndex(x, y);
 
@@ -122,26 +156,42 @@ bool Grid::placePokemon(int x, int y, SDL_Rect src)
       if (src.x == availablePokemons[j]->srcRect.x && src.y == availablePokemons[j]->srcRect.y)
       {
         Pokemon* newPokemon = new Pokemon(src, {tiles[index].x + availablePokemons[j]->moverRect.x, tiles[index].y + availablePokemons[j]->moverRect.y, availablePokemons[j]->moverRect.w, availablePokemons[j]->moverRect.h}, availablePokemons[j]->atkPower, availablePokemons[j]->atkRange, availablePokemons[j]->states, availablePokemons[j]->texture, availablePokemons[j]->projectile, availablePokemons[j]->health.maxHealth);
+        
+        // adjust projectile mover using current tile index
+        newPokemon->projectile->moverRect.x = newPokemon->moverRect.x - 20;
+        newPokemon->projectile->moverRect.y = newPokemon->moverRect.y;
         pokemons[index] = newPokemon;
-        return true;
+
         break;
       }
     }
   }
-  return false;
 }
 
 bool Grid::checkCollision(const SDL_Rect& rect1, const SDL_Rect& rect2) 
 {
-  // Check for horizontal collision
-  bool horizontalCollision = (rect1.x < rect2.x + rect2.w) && (rect1.x + rect1.w > rect2.x);
+    // Check for horizontal collision
+    bool horizontalCollision = (rect1.x < rect2.x + rect2.w) && (rect1.x + rect1.w > rect2.x);
 
-  // Check for vertical collision
-  bool verticalCollision = (rect1.y < rect2.y + rect2.h) && (rect1.y + rect1.h > rect2.y);
+    // Check for vertical collision
+    bool verticalCollision = (rect1.y < rect2.y + rect2.h) && (rect1.y + rect1.h > rect2.y);
 
-  // Return true if both horizontal and vertical collisions occur
-  return horizontalCollision && verticalCollision;
+    // Return true if both horizontal and vertical collisions occur
+    return horizontalCollision && verticalCollision;
 }
+// check for the enemies this time 
+
+// bool Grid::checkCollision(const SDL_Rect& rect1, const SDL_Rect& rect2) 
+// {
+//     // Check for horizontal collision
+//     bool horizontalCollision = (rect1.x < rect2.x + rect2.w) && (rect1.x + rect1.w > rect2.x);
+
+//     // Check for vertical collision
+//     bool verticalCollision = (rect1.y < rect2.y + rect2.h) && (rect1.y + rect1.h > rect2.y);
+
+//     // Return true if both horizontal and vertical collisions occur
+//     return horizontalCollision && verticalCollision;
+// }
 
 // iterates over the grid and draws all pokemon on that grid
 void Grid::drawGrid(SDL_Renderer* renderer)
@@ -152,10 +202,10 @@ void Grid::drawGrid(SDL_Renderer* renderer)
     {
       pokemons[i]->draw(renderer);
       pokemons[i]->health.draw(renderer);
-      if (pokemons[i]->isThrown)
+      if (pokemons[i]->currProj != nullptr)
       {
         // if it's being thrown, draw it
-        pokemons[i]->projectile.draw(renderer);
+        pokemons[i]->currProj->draw(renderer);
 
         // checks if projectile destroyed or not
         bool destroyed = false;
@@ -163,7 +213,7 @@ void Grid::drawGrid(SDL_Renderer* renderer)
         // check collision with enemy
         for (int j = 0; j < enemies.size(); j++)
         {
-          if (checkCollision(pokemons[i]->projectile.moverRect, enemies[j]->moverRect))
+          if (checkCollision(pokemons[i]->currProj->moverRect, enemies[j]->moverRect))
           {
             // std::cout << "Collision detected" << std::endl;
             pokemons[i]->destroyProjectile();
@@ -171,19 +221,26 @@ void Grid::drawGrid(SDL_Renderer* renderer)
             destroyed = true;
             break;
           }
-        }
-        
+          
+          /// to make the pokemon blink upon collision 
+          // if (pokemons[i]->isHit)
+          // {   
+          //   SDL_RenderCopy(renderer, enemyTexture, &enemies[i]->empty, &enemies[i]->moverRect);
+          //   pokemons[i]->isHit = false;
+          // }
+
         // check boundary condition only if projectile not destroyed
         if (!destroyed)
         {
-          // if it exceeds boundary, destroy it 
-          if (pokemons[i]->projectile.moverRect.x <= 10 && pokemons[i]->isThrown)
+          // if it exceeds boundary, destroy it
+          if (pokemons[i]->currProj->moverRect.x <= 10)
           {
             pokemons[i]->destroyProjectile();
             // reducing health when projectile goes offscreen to see health depletion
             pokemons[i]->health.currHealth -= 5;
           }
         }
+        }  
       }
       // if pokemon's projectile is not being thrown, throw it
       else 
@@ -192,6 +249,7 @@ void Grid::drawGrid(SDL_Renderer* renderer)
       }
     }
   }
+  
 }
 
 // spawns an enemy in a random lane
@@ -220,9 +278,15 @@ void Grid::spawnEnemy()
     enemyIndex = 0;
 
   int lane = rand() % numRows;
-  Enemy* newEnemy = new Enemy(possibleEnemies[enemyIndex]->srcRect, {startX, startY+(lane*tileHeight), possibleEnemies[enemyIndex]->moverRect.w, possibleEnemies[enemyIndex]->moverRect.h}, possibleEnemies[enemyIndex]->atkPower, possibleEnemies[enemyIndex]->atkRange, possibleEnemies[enemyIndex]->movingSpeed, possibleEnemies[enemyIndex]->states, possibleEnemies[enemyIndex]->texture, possibleEnemies[enemyIndex]->health.maxHealth, possibleEnemies[enemyIndex]->pointsDrop);
+  Enemy* newEnemy = new Enemy(possibleEnemies[enemyIndex]->srcRect, {startX, startY+(lane*tileHeight), possibleEnemies[enemyIndex]->moverRect.w, possibleEnemies[enemyIndex]->moverRect.h}, possibleEnemies[enemyIndex]->atkPower, possibleEnemies[enemyIndex]->atkRange, possibleEnemies[enemyIndex]->movingSpeed, possibleEnemies[enemyIndex]->states, possibleEnemies[enemyIndex]->texture, possibleEnemies[enemyIndex]->projectileE, possibleEnemies[enemyIndex]->health.maxHealth);
+    
+  newEnemy->projectileE->moverRect.x = newEnemy->moverRect.x + 12;
+  // std::cout<<"pro"<< newEnemy<<std::endl;
+  newEnemy->projectileE->moverRect.y = newEnemy->moverRect.y;
+  // enemies[index] = newEnemy;
 
   enemies.push_back(newEnemy);
+    
 }
 
 // function that decides if enemy should spawn or not and does so
@@ -247,6 +311,7 @@ void Grid::shouldEnemySpawn()
       {
         spawnEnemy();
         lastSpawnTime = SDL_GetTicks();
+        // std::cout<<lastSpawnTime<<std::endl;
       }
   }
 }
@@ -260,11 +325,64 @@ void Grid::drawEnemies(SDL_Renderer* renderer)
     if (pokemons[insertIndex(enemies[i]->moverRect.x + enemies[i]->moverRect.w + 30, enemies[i]->moverRect.y)] == nullptr)
     {
       enemies[i]->moveForward();
+      // std::cout<<"projectile neemy"<<enemies[i]->currProjE->texture<<std::endl;
+
     }
-    
-    // moves health bar of enemy along with it
+    if (enemies[i]->currProjE != nullptr)
+      {
+        // std::cout << "is null" << std::endl;
+        // if it's being thrown, draw it
+        // std::cout << enemies[i]->currProjE->moverRect.x << std::endl;
+        enemies[i]->currProjE->moverRect.x += enemies[i]->movingSpeed*6;
+        enemies[i]->currProjE->draw(renderer);
+        // std::cout << enemies[i]->currProjE->moverRect.x << std::endl;
+        // std::cout << "Drawing [projectile]" <<std::endl;
+
+        // checks if projectile destroyed or not
+        bool destroyed = false;
+
+        // check collision with enemy
+        for (int j = 0; j < pokemons.size(); j++)
+        {
+        // std::cout << "draw" << std::endl;
+          if (pokemons[j] != nullptr)
+          {
+            if (checkCollision(enemies[i]->currProjE->moverRect, pokemons[j]->moverRect))
+            {
+              // std::cout << "Collision detected" << std::endl;
+              enemies[i]->destroyProjectile();
+              pokemons[j]->gotHit();
+              destroyed = true;
+              break;
+            }
+          }
+        }
+
+        // check boundary condition only if projectile not destroyed
+        if (!destroyed)
+        {
+          // if it exceeds boundary, destroy it
+          if (enemies[i]->currProjE->moverRect.x >= 500)
+          {
+            enemies[i]->destroyProjectile();
+            // reducing health when projectile goes offscreen to see health depletion
+            // enemies[i]->health.currHealth -= 1; instead the castle health reduces upon collision
+            Castle->decreaseHealth();//decrease health of the home castle 
+          }
+        }
+      // moves health bar of enemy along with it
+      } 
+      else // if enemies projectile is not being thrown, throw it
+      {
+        enemies[i]->throwProjectile();
+        // std::cout << enemies[i]->currProjE->moverRect.x << std::endl;
+        count+=1;
+        enemies[i]->currProjE->moverRect.x = enemies[i]->moverRect.x + enemies[i]->moverRect.w-5;
+        // std::cout << "Throw count: " << count <<std::endl;      
+        // std::cout << enemies[i]->currProjE->moverRect.x << std::endl;
+      }
     enemies[i]->health.moverRect.x = enemies[i]->moverRect.x;
-    
+
     // if got hit, then blink, else normally drae enemy
     if (enemies[i]->isHit)
     {   
@@ -273,10 +391,11 @@ void Grid::drawEnemies(SDL_Renderer* renderer)
     }
     else
     {
+      
       enemies[i]->draw(renderer);
-    }
-    
-    enemies[i]->health.draw(renderer);
+      enemies[i]->health.draw(renderer);
+    } 
+
   }
 }
 
@@ -302,7 +421,6 @@ void Grid::cleanCharacters()
     // for testing purposes, enemies are killed if they cross 500 units distance
     if (enemies[k]->isDead() || enemies[k]->moverRect.x > 500)
     {
-      stats.scores.points += enemies[k]->pointsDrop;
       delete enemies[k];
       enemies[k] = nullptr;
     }
@@ -351,5 +469,10 @@ Grid::~Grid()
   {
     delete projectiles[l];
     projectiles[l] = nullptr;
+  }
+  for (int l = 0; l < projectilesE.size(); l++)
+  {
+    delete projectilesE[l];
+    projectilesE[l] = nullptr;
   }
 }

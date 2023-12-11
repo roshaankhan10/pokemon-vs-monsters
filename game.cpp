@@ -1,112 +1,4 @@
-#include "game.hpp"
-
-// bool Game::StartScreen(){
-//     SDL_Texture* assets = loadTexture("Assets/intro.png");
-//     SDL_Texture* startButton = loadTexture("Assets/yo.png");
-	
-// 	SDL_Texture* blackScreen = SDL_CreateTexture(gRenderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, SCREEN_WIDTH, SCREEN_HEIGHT);
-//     SDL_SetRenderTarget(gRenderer, blackScreen);
-//     SDL_SetRenderDrawColor(gRenderer, 0, 0, 0, 255); // Set the color to black
-//     SDL_RenderClear(gRenderer); // Fill the texture with the black color
-//     SDL_SetRenderTarget(gRenderer, NULL);
-// 	// Mix_PlayMusic(menuMusic, -1);
-
-
-// 	if (startButton == NULL) {
-// 		printf("Failed to load start button texture!\n");
-// 		return false;
-// 	}
-
-//     SDL_Rect startButtonRect;
-//     startButtonRect.x = (1244-222)/2/* x position of the start button */;
-//     startButtonRect.y = 590/* y position of the start button */;
-//     startButtonRect.w = 222/* width of the start button */;  //222
-//     startButtonRect.h = 83/* height of the start button */;   //83
-
-// 	// SDL_Rect introRect;
-// 	// introRect.x = 120/* x position of the start button */;
-// 	// introRect.y = 330/* y position of the start button */;
-// 	// introRect.w = 1020;//222/* width of the start button */;
-// 	// introRect.h = 150;//83/* height of the start button */;
-
-//     bool quit = false;
-//     bool renderButton = true;
-//     SDL_Event e;
-
-// 	SDL_SetTextureBlendMode(startButton, SDL_BLENDMODE_BLEND);
-// 	int alpha = 255;
-// 	int alphaChange = -5;
-
-// 	// SDL_SetTextureBlendMode(intro, SDL_BLENDMODE_BLEND);
-// 	// SDL_SetTextureAlphaMod(intro, 255);
-// 	int introAlpha = 0;
-
-// 	while (!quit) {
-// 		// if (renderButton){
-// 		// 	SDL_RenderCopy(gRenderer, blackScreen, NULL, NULL);
-
-// 		// 	// SDL_SetTextureAlphaMod(intro, introAlpha);
-// 		// 	// SDL_RenderCopy(gRenderer, intro, NULL, &introRect);
-// 		// 	while(SDL_PollEvent(&e) != 0){
-// 		// 		if (e.type == SDL_QUIT){
-// 		// 			quit = true;
-// 		// 			return false;
-// 		// 		}
-// 		// 		if (e.type == SDL_MOUSEBUTTONDOWN){
-// 		// 			renderButton = false;
-// 		// 		}
-// 		// 	}
-// 		// 	introAlpha += 1;
-// 		// 	if (introAlpha >= 255){
-// 		// 		introAlpha = 255;
-// 		// 		// introAlpha -= rand() % 1 - 5;
-				
-// 		// 	}
-// 		// 	SDL_RenderPresent(gRenderer);
-// 		// 	SDL_Delay(10);
-// 		// 	continue;
-// 		// }
-
-//     	while (SDL_PollEvent(&e) != 0) {
-// 			// mouseClick.handleEvent(e);
-//         	if (e.type == SDL_QUIT) {
-//             	quit = true;
-// 				return false;
-//         	}
-//         	if (e.type == SDL_MOUSEBUTTONDOWN) {
-//             	int xMouse, yMouse;
-//             	SDL_GetMouseState(&xMouse, &yMouse);
-//             	if (xMouse >= startButtonRect.x && xMouse <= startButtonRect.x + startButtonRect.w && yMouse >= startButtonRect.y && yMouse <= startButtonRect.y + startButtonRect.h) {
-// 					// Mix_FreeMusic(menuMusic);
-// 					// Mix_CloseAudio();
-// 					// Mix_PlayMusic(gameMusic, -1);
-//                 	quit = true;
-//             	}
-//         	}
-//     	}
-
-//     SDL_RenderCopy(gRenderer, assets, NULL, NULL);
-
-//     SDL_SetTextureAlphaMod(startButton, alpha);
-//     SDL_RenderCopy(gRenderer, startButton, NULL, &startButtonRect);
-
-//     SDL_RenderPresent(gRenderer);
-
-//     alpha += alphaChange;
-//     if (alpha <= 0 || alpha >= 255) {
-//         alphaChange = rand() % 11 - 5; // Random number between -5 and 5
-//         // alpha = std::clamp(alpha, 0, 255); // Ensure alpha stays within the valid range
-//     }
-// 	}
-
-//     SDL_DestroyTexture(startButton);
-// 	// SDL_DestroyTexture(intro);
-// 	SDL_DestroyTexture(blackScreen);
-// 	return true;
-// }
-
-
-
+#include "Game.hpp"
 
 bool Game::init()
 {
@@ -155,11 +47,9 @@ bool Game::init()
 					printf( "SDL_image could not initialize! SDL_image Error: %s\n", IMG_GetError() );
 					success = false;
 				}
-				// Initialize SDL_ttf
-				else if (TTF_Init() == -1) 
+				if( Mix_OpenAudio( 44100, MIX_DEFAULT_FORMAT, 2, 2048 ) < 0 )
 				{
-					printf( "SDL_ttf initialization failed: %s\n", TTF_GetError() );
-					// std::cerr << "SDL_ttf initialization failed: " << TTF_GetError() << std::endl;
+					printf( "SDL_mixer could not initialize! SDL_mixer Error: %s\n", Mix_GetError() );
 					success = false;
 				}
 
@@ -175,24 +65,19 @@ bool Game::loadMedia()
 	//Loading success flag
 	bool success = true;
 	
-  gTexture = loadTexture("assets/backgroundd.png");
+	gTexture = loadTexture("assets/backgroundd.png");
 	pokemons = loadTexture("assets/pokemons.png");
-  monsters = loadTexture("assets/enemies.png");
-  projectiles = loadTexture("assets/projectiles.png");
-  pokeballSprites = loadTexture("assets/pokeballs.png");
+	monsters = loadTexture("assets/enemies.png");
+	projectiles = loadTexture("assets/projectiles.png");
+	projectilesE = loadTexture("assets/enemProjectiles.png");
+	bgMusic = Mix_LoadMUS("backMusicStart.wav");
 
-	if (pokemons == NULL || gTexture == NULL || monsters == NULL || projectiles == NULL || pokeballSprites == NULL)
+	if (pokemons == NULL || gTexture == NULL || monsters == NULL || projectiles == NULL || projectilesE == NULL || bgMusic == NULL)
 	{
 			printf("Unable to run due to error: %s\n",SDL_GetError());
 			success =false;
 	} 
-
-	font = loadFont("assets/16020_FUTURAM.ttf", 24);
-	if (font == NULL) 
-	{
-		printf("Unable to run due to error: %s\n",TTF_GetError());
-		success = false;
-  }
+	
 	return success;
 }
 
@@ -203,20 +88,15 @@ void Game::close()
 	SDL_DestroyTexture(monsters);
 	SDL_DestroyTexture(pokeballs);
 	SDL_DestroyTexture(projectiles);
-	SDL_DestroyTexture(pokeballSprites);
+	SDL_DestroyTexture(projectilesE);
 	pokemons = NULL;
 	monsters = NULL;
 	pokeballs = NULL;
 	projectiles = NULL;
-	pokeballSprites = NULL;
+	projectilesE = NULL;
 
 	SDL_DestroyTexture(gTexture);
 	gTexture = NULL;
-
-	if (font != NULL) 
-	{
-			TTF_CloseFont(font);
-	}
 	
 	//Destroy window
 	SDL_DestroyRenderer( gRenderer );
@@ -224,35 +104,14 @@ void Game::close()
 	gWindow = NULL;
 	gRenderer = NULL;
 
+	//destroy Music
+	Mix_FreeMusic(bgMusic);
+	bgMusic = NULL;
+
 	//Quit SDL subsystems
 	IMG_Quit();
 	SDL_Quit();
-	TTF_Quit();
-}
-
-// Function to load a font
-TTF_Font* Game::loadFont(const std::string& fontPath, int fontSize) 
-{
-    TTF_Font* font = TTF_OpenFont(fontPath.c_str(), fontSize);
-    if (font == nullptr) {
-        std::cerr << "Font loading failed: " << TTF_GetError() << std::endl;
-    }
-    return font;
-}
-
-// Function to render text
-SDL_Texture* Game::renderText(SDL_Renderer* renderer, TTF_Font* font, const std::string& text, SDL_Color color) 
-{
-    SDL_Surface* surface = TTF_RenderText_Solid(font, text.c_str(), color);
-    if (surface == nullptr) {
-        std::cerr << "Text rendering failed: " << TTF_GetError() << std::endl;
-        return nullptr;
-    }
-
-    SDL_Texture* texture = SDL_CreateTextureFromSurface(renderer, surface);
-    SDL_FreeSurface(surface);
-
-    return texture;
+	Mix_Quit();
 }
 
 SDL_Texture* Game::loadTexture( std::string path )
@@ -296,34 +155,6 @@ bool Game::IsMouseOverDraggableObject(int x, int y, std::vector<DraggableObject*
 	return false;
 }
 
-void Game:: StartScreen(){
-	SDL_Event e;
-	SDL_Texture* startbutton = loadTexture("assets/download1.png");
-	SDL_Texture* startbackground = loadTexture("assets/intro.png");
-
-	SDL_Rect startbuttonrect={450,275,100,50};
-	SDL_Rect startbackgroundrect={0,0,1000,600};
-
-	SDL_RenderCopy(gRenderer,startbackground,NULL,&startbackgroundrect);
-	SDL_RenderCopy(gRenderer,startbutton,NULL,&startbuttonrect);
-	// startbuttonrect.x
-	bool quitStart = false;
-	while(!quitStart){
-		while(SDL_PollEvent( &e ) != 0 ){
-			if (e.type == SDL_MOUSEBUTTONDOWN){
-				int x,y;
-				SDL_GetMouseState(&x,&y);
-				if (x >= startbuttonrect.x && x <= startbuttonrect.x+100 && y >= startbuttonrect.y && y<= startbuttonrect.y+50){
-					quitStart = true;
-				}
-			}
-		}
-				SDL_RenderCopy(gRenderer, startbutton, NULL, &startbuttonrect);
-				SDL_RenderPresent(gRenderer);
-	}
-	SDL_DestroyTexture(startbutton);
-}
-
 void Game::run( )
 {
 	bool quit = false;
@@ -349,9 +180,8 @@ void Game::run( )
 	pokemonMenu.pokemonIcons.push_back(azumarill);
 
 	// creating grid to store all pokemon
-	Grid grid{pokemons, monsters, projectiles, pokeballSprites, 50, 155, 73, 83, 5, 9};	
+	Grid grid{pokemons, monsters, projectiles, projectilesE, 50, 155, 73, 83, 5, 9};	
 
-	StartScreen();
 	while( !quit )
 	{
 		//Handle events on queue
@@ -375,7 +205,6 @@ void Game::run( )
 					if (IsMouseOverDraggableObject(xMouse, yMouse, pokemonMenu.pokemonIcons, selectedPokemon)) 
 					{
 						// You can now track that selectedPokemon is being dragged
-						if (!selectedPokemon->isCoolingdown())
 						selectedPokemon->StartDragging();
           }
         } 
@@ -401,10 +230,7 @@ void Game::run( )
 					// hence, these coordinates will be utilized later to insert pokemon in grid
 					int xMouse, yMouse;
 					SDL_GetMouseState(&xMouse,&yMouse);
-					if (grid.placePokemon(xMouse, yMouse, selectedPokemon->srcRect))
-					{
-						selectedPokemon->startCooldown();
-					}
+					grid.placePokemon(xMouse, yMouse, selectedPokemon->srcRect);
 
 					// Now we can stop dragging the selectedPokemon and return it to it's original position
 					selectedPokemon->StopDragging();
@@ -439,19 +265,16 @@ void Game::run( )
 
 		// draws all enemies
 		grid.drawEnemies(gRenderer);
-
-		// draws stats
-		grid.stats.displayStats(gRenderer, font);
-
-		// draws capacity of enemies that can spawn, may need to move this to grid class
-		std::string capacity = "Wave no. " + std::to_string(grid.currCap);
-		grid.stats.displayText(gRenderer, font, capacity, 800, 150);
 				
 		//****************************************************************
 		SDL_RenderPresent(gRenderer); //displays the updated renderer
 
 		// reduced delay to 50 ms for smooth transitions
 		SDL_Delay(120);	//causes sdl engine to delay for specified miliseconds
+		// play the music 
+		if(Mix_PlayingMusic()==0){
+			Mix_PlayMusic(bgMusic,2);
+		}
 	}
 
 	// free heap to prevent memory leakages
