@@ -47,7 +47,17 @@ bool Game::init()
 					printf( "SDL_image could not initialize! SDL_image Error: %s\n", IMG_GetError() );
 					success = false;
 				}
-				if( Mix_OpenAudio( 44100, MIX_DEFAULT_FORMAT, 2, 2048 ) < 0 )
+				
+				// Initialize SDL_ttf
+				else if (TTF_Init() == -1) 
+				{
+					printf( "SDL_ttf initialization failed: %s\n", TTF_GetError() );
+					// std::cerr << "SDL_ttf initialization failed: " << TTF_GetError() << std::endl;
+					success = false;
+				}
+
+				// initialize mixer
+				else if( Mix_OpenAudio( 44100, MIX_DEFAULT_FORMAT, 2, 2048 ) < 0 )
 				{
 					printf( "SDL_mixer could not initialize! SDL_mixer Error: %s\n", Mix_GetError() );
 					success = false;
@@ -65,18 +75,40 @@ bool Game::loadMedia()
 	//Loading success flag
 	bool success = true;
 	
-	gTexture = loadTexture("assets/backgroundd.png");
+  gTexture = loadTexture("assets/backgroundd.png");
 	pokemons = loadTexture("assets/pokemons.png");
-	monsters = loadTexture("assets/enemies.png");
-	projectiles = loadTexture("assets/projectiles.png");
+  monsters = loadTexture("assets/enemies.png");
+  projectiles = loadTexture("assets/projectiles.png");
+  pokeballSprites = loadTexture("assets/pokeballs.png");
 	projectilesE = loadTexture("assets/enemProjectiles.png");
-	bgMusic = Mix_LoadMUS("backMusicStart.wav");
 
-	if (pokemons == NULL || gTexture == NULL || monsters == NULL || projectiles == NULL || projectilesE == NULL || bgMusic == NULL)
+	if (pokemons == NULL || gTexture == NULL || monsters == NULL || projectiles == NULL || pokeballSprites == NULL || projectilesE == NULL)
 	{
 			printf("Unable to run due to error: %s\n",SDL_GetError());
 			success =false;
 	} 
+
+	// if all pictures loaded, load background music
+	else 
+	{
+		bgMusic = Mix_LoadMUS("assets/backMusicStart.wav");
+		if (bgMusic == NULL)
+		{
+			printf("Unable to run due to error: %s\n",Mix_GetError());
+			success =false;
+		}
+
+		// if sound also loaded, load font
+		else 
+		{
+			font = loadFont("assets/16020_FUTURAM.ttf", 24);
+			if (font == NULL) 
+			{
+				printf("Unable to run due to error: %s\n",TTF_GetError());
+				success = false;
+			}
+		}
+	}
 	
 	return success;
 }
@@ -88,15 +120,22 @@ void Game::close()
 	SDL_DestroyTexture(monsters);
 	SDL_DestroyTexture(pokeballs);
 	SDL_DestroyTexture(projectiles);
+	SDL_DestroyTexture(pokeballSprites);
 	SDL_DestroyTexture(projectilesE);
 	pokemons = NULL;
 	monsters = NULL;
 	pokeballs = NULL;
 	projectiles = NULL;
+	pokeballSprites = NULL;
 	projectilesE = NULL;
 
 	SDL_DestroyTexture(gTexture);
 	gTexture = NULL;
+
+	if (font != NULL) 
+	{
+			TTF_CloseFont(font);
+	}
 	
 	//Destroy window
 	SDL_DestroyRenderer( gRenderer );
@@ -111,7 +150,18 @@ void Game::close()
 	//Quit SDL subsystems
 	IMG_Quit();
 	SDL_Quit();
+	TTF_Quit();
 	Mix_Quit();
+}
+
+// Function to load a font
+TTF_Font* Game::loadFont(const std::string& fontPath, int fontSize) 
+{
+    TTF_Font* font = TTF_OpenFont(fontPath.c_str(), fontSize);
+    if (font == nullptr) {
+        std::cerr << "Font loading failed: " << TTF_GetError() << std::endl;
+    }
+    return font;
 }
 
 SDL_Texture* Game::loadTexture( std::string path )
@@ -155,6 +205,53 @@ bool Game::IsMouseOverDraggableObject(int x, int y, std::vector<DraggableObject*
 	return false;
 }
 
+bool Game:: StartScreen(){
+	SDL_Event e;
+	SDL_Texture* startbutton = NULL;
+	startbutton = loadTexture("assets/download1.png");
+	SDL_Texture* startbackground = NULL; 
+	startbackground = loadTexture("assets/intro.png");
+
+	// if we are unable to load textures, we can't display start screen so return false
+	if (startbutton == NULL || startbackground == NULL)
+	{
+			printf("Unable to run due to error: %s\n",SDL_GetError());
+			return false;
+	} 
+
+	// render background and start button
+	SDL_Rect startbuttonrect={450,275,100,50};
+	SDL_Rect startbackgroundrect={0,0,1000,600};
+	SDL_RenderCopy(gRenderer,startbackground,NULL,&startbackgroundrect);
+	SDL_RenderCopy(gRenderer,startbutton,NULL,&startbuttonrect);
+
+	// loop runs to keep displaying start screen until user clicks on start button
+	bool quitStart = false;
+	while(!quitStart)
+	{
+		while(SDL_PollEvent( &e ) != 0 )
+		{
+			if (e.type == SDL_MOUSEBUTTONDOWN)
+			{
+				int x, y;
+				SDL_GetMouseState(&x, &y);
+				if (x >= startbuttonrect.x && x <= startbuttonrect.x+100 && y >= startbuttonrect.y && y<= startbuttonrect.y+50){
+					quitStart = true;
+				}
+			}
+		}
+		SDL_RenderCopy(gRenderer, startbutton, NULL, &startbuttonrect);
+		SDL_RenderPresent(gRenderer);
+	}
+
+	// destroy textures as not needed anymore
+	SDL_DestroyTexture(startbutton);
+	SDL_DestroyTexture(startbackground);
+	
+	// now that screen worked fine, return true
+	return true;
+}
+
 void Game::run( )
 {
 	bool quit = false;
@@ -180,7 +277,14 @@ void Game::run( )
 	pokemonMenu.pokemonIcons.push_back(azumarill);
 
 	// creating grid to store all pokemon
-	Grid grid{pokemons, monsters, projectiles, projectilesE, 50, 155, 73, 83, 5, 9};	
+	Grid grid{pokemons, monsters, projectiles, pokeballSprites, projectilesE, 50, 155, 73, 83, 5, 9};	
+
+	// displays start screen, if it works fine, returns true, else false
+	if (!StartScreen())
+	{
+		// if start screen doesn't work, quit the game
+		quit = true;
+	}
 
 	while( !quit )
 	{
@@ -205,6 +309,7 @@ void Game::run( )
 					if (IsMouseOverDraggableObject(xMouse, yMouse, pokemonMenu.pokemonIcons, selectedPokemon)) 
 					{
 						// You can now track that selectedPokemon is being dragged
+						if (!selectedPokemon->isCoolingdown())
 						selectedPokemon->StartDragging();
           }
         } 
@@ -230,7 +335,10 @@ void Game::run( )
 					// hence, these coordinates will be utilized later to insert pokemon in grid
 					int xMouse, yMouse;
 					SDL_GetMouseState(&xMouse,&yMouse);
-					grid.placePokemon(xMouse, yMouse, selectedPokemon->srcRect);
+					if (grid.placePokemon(xMouse, yMouse, selectedPokemon->srcRect))
+					{
+						selectedPokemon->startCooldown();
+					}
 
 					// Now we can stop dragging the selectedPokemon and return it to it's original position
 					selectedPokemon->StopDragging();
@@ -265,12 +373,20 @@ void Game::run( )
 
 		// draws all enemies
 		grid.drawEnemies(gRenderer);
+
+		// draws stats
+		grid.stats.displayStats(gRenderer, font);
+
+		// draws capacity of enemies that can spawn, may need to move this to grid class
+		std::string capacity = "Wave no. " + std::to_string(grid.currCap);
+		grid.stats.displayText(gRenderer, font, capacity, 800, 150);
 				
 		//****************************************************************
 		SDL_RenderPresent(gRenderer); //displays the updated renderer
 
 		// reduced delay to 50 ms for smooth transitions
 		SDL_Delay(120);	//causes sdl engine to delay for specified miliseconds
+		
 		// play the music 
 		if(Mix_PlayingMusic()==0){
 			Mix_PlayMusic(bgMusic,2);

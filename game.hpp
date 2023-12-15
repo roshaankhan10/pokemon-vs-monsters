@@ -1,10 +1,9 @@
 // #pragma once
 #include"Menu.hpp"
 #include <SDL_image.h>
-#include <stdio.h>
+#include <SDL_ttf.h>
 #include <SDL_mixer.h>
-// #include <SDL2/SDL_mixer.h>
-
+#include <stdio.h>
 #include <iostream>
 #include <stdlib.h>
 #include <time.h>
@@ -23,17 +22,24 @@ class Game{
 
     //Current displayed texture
     SDL_Texture* gTexture = NULL;
-    //adding background music 
+
+    //font 
+    TTF_Font* font = NULL;
+
+    //background music 
     Mix_Music* bgMusic = NULL;
+    
     //global reference to png image sheets
     SDL_Texture* pokemons = NULL;
     SDL_Texture* monsters = NULL;
     SDL_Texture* pokeballs = NULL;
     SDL_Texture* projectiles = NULL;
     SDL_Texture* projectilesE = NULL;
+    SDL_Texture* pokeballSprites = NULL;
 
 public:
 
+    bool StartScreen();
     bool init();
     bool loadMedia();
     void close();
@@ -41,5 +47,6 @@ public:
     void run();
     // method to determine if mouse is over a draggable object to start dragging it by changing selectedObject
     bool IsMouseOverDraggableObject(int x, int y, std::vector<DraggableObject*> objects, DraggableObject*& selectedObject);
+    TTF_Font* loadFont(const std::string& fontPath, int fontSize);
 };
 

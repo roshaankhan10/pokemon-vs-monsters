@@ -4,9 +4,10 @@ Pokemon::Pokemon(SDL_Rect src, SDL_Rect mover, int power, int range, std::vector
   :Character(src, mover, power, range, frames, Texture, health), projectile(proj)
 {}
 
-void Pokemon::gotHit()
+void Pokemon::gotHit(int damage)
 {
   // implementation to be done after projectiles are made
+  health.currHealth -= damage;
 }
 
 // this function will create a new projectile

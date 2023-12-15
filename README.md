@@ -3,4 +3,4 @@ This repository contains code for our OOP project in C++ called Pokémon vs. Mon
 
 How to compile:
 - run the following command and make sure you have sdl2 and g++ installed and configured
-- g++ *.cpp -IC:\mingw_dev_lib\include\SDL2 -LC:\mingw_dev_lib\lib -w -lmingw32 -lSDL2main -lSDL2 -lSDL2_image
+- g++ *.cpp -IC:\mingw_dev_lib\include\SDL2 -LC:\mingw_dev_lib\lib -w -lmingw32 -lSDL2main -lSDL2 -lSDL2_image -lSDL2_ttf -lSDL2_mixer
