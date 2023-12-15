@@ -65,7 +65,7 @@ Grid::Grid(SDL_Texture* Texture, SDL_Texture* enem, SDL_Texture* proj, SDL_Textu
   // create all projectiles for pokemon
   Projectile* electroBallPtr = new Projectile(electroBall[0], {0,0,35,35}, electroBall, projTexture, -5);
   projectiles.push_back(electroBallPtr);
-  Projectile* windBladePtr = new Projectile(windBlade[0], {0,0,40,40}, windBlade, projTexture, -8);
+  Projectile* windBladePtr = new Projectile(windBlade[0], {0,0,40,40}, windBlade, projTexture, -10);
   projectiles.push_back(windBladePtr);
   Projectile* fireRingPtr = new Projectile(fireRing[0],{0,0,40,40},fireRing,projTexture, -7);
   projectiles.push_back(fireRingPtr);
@@ -103,7 +103,7 @@ Grid::Grid(SDL_Texture* Texture, SDL_Texture* enem, SDL_Texture* proj, SDL_Textu
   projectiles.push_back(thanosBallPtr);
 
   // now insert all possible enemiesm, in order of weak to strong, i.e. weak inserted at lower index
-  Enemy* southpawObj = new Enemy(southpawStates[0], southpaw, 10, 1, 3, southpawStates, enemyTexture, *southpawBallPtr, 70, 3);
+  Enemy* southpawObj = new Enemy(southpawStates[0], southpaw, 10, 2, 3, southpawStates, enemyTexture, *southpawBallPtr, 70, 3);
   Enemy* birdObj = new Enemy(birdStates[0], bird, 7, 4, 6, birdStates, enemyTexture, *birdBallPtr, 60, 5);
   Enemy* jellaquidObj = new Enemy(jellaquidStates[0], jellaquid, 10, 6, 4, jellaquidStates, enemyTexture, *jellaquidBallPtr, 100, 10);
   Enemy* thanosObj = new Enemy(thanosStates[0], thanos, 18, 3, 1, thanosStates, enemyTexture, *thanosBallPtr, 200, 16);
@@ -163,6 +163,43 @@ bool Grid::checkCollision(const SDL_Rect& rect1, const SDL_Rect& rect2)
   return horizontalCollision && verticalCollision;
 }
 
+// checks if a character is in range
+bool Grid::checkInRange(const SDL_Rect& rect, const int range, const bool isPokemon)
+{
+  // if it's a pokemon, check if enemies are in range on left
+  if (isPokemon)
+  {
+    int totalRange = range * tileWidth;
+    for (int i = 0; i < enemies.size(); i++)
+    {
+      // create a new mover rect and pass it to check collision function
+      SDL_Rect rangeBlock = {rect.x - totalRange, rect.y, totalRange, rect.h};
+      
+      // if enemy's mover Rect lies in range and enemy in front of pokemon 
+      if (checkCollision(rangeBlock, enemies[i]->moverRect))
+        return true;
+    }
+    return false;
+  }
+  else 
+  {
+    int totalRange = range * tileWidth;
+    for (int i = 0; i < pokemons.size(); i++)
+    {
+      if (pokemons[i] != nullptr)
+      {
+        // create a new mover rect and pass it to check collision function
+        SDL_Rect rangeBlock = {rect.x + rect.w , rect.y, totalRange, rect.h};
+
+        // if enemy's mover Rect lies in range and enemy in front of pokemon
+        if (checkCollision(rangeBlock, pokemons[i]->moverRect))
+          return true;
+      }
+    }
+    return false;
+  }
+}
+
 // iterates over the grid and draws all pokemon on that grid
 void Grid::drawGrid(SDL_Renderer* renderer)
 {
@@ -205,7 +242,8 @@ void Grid::drawGrid(SDL_Renderer* renderer)
       // if pokemon's projectile is not being thrown, throw it
       else 
       {
-        pokemons[i]->throwProjectile();
+        if (checkInRange(pokemons[i]->moverRect, pokemons[i]->atkRange, true))
+          pokemons[i]->throwProjectile();
       }
     }
   }
@@ -222,19 +260,17 @@ void Grid::spawnEnemy()
 
   double chance = (double(elapsedTime) / double(interval)) / 100;
 
-  int enemProb = rand() % 1000;
-
   // decides which enemy should be spawned based on probabiity which changes with time
-  if (enemProb < (100 + chance))
-    enemyIndex = 4;
-  else if (enemProb < (220 + chance))
-    enemyIndex = 3;
-  else if (enemProb < (370 + chance))
-    enemyIndex = 2;
-  else if (enemProb < (570 + chance))
-    enemyIndex = 1;
-  else 
-    enemyIndex = 0;
+  if (currCap <= 2)
+    enemyIndex = rand() % 1;
+  else if (currCap <= 4)
+    enemyIndex = rand() % 2;
+  else if (currCap <= 6)
+    enemyIndex = rand() % 3;
+  else if (currCap <= 8)
+    enemyIndex = rand() % 4;
+  else
+    enemyIndex = rand() % 5;
 
   int lane = rand() % numRows;
   Enemy* newEnemy = new Enemy(possibleEnemies[enemyIndex]->srcRect, 
@@ -255,9 +291,9 @@ void Grid::shouldEnemySpawn()
   {
     currCap += 1;
     enemiesKilled = 0;
-    if (spawnInterval > 1000) // spawnInterval will decrease by 0.5s, until it reaches lowest (1s)
+    if (spawnInterval > 4000) // spawnInterval will decrease by 0.4s, until it reaches lowest (4s)
     {
-      spawnInterval -= 500;
+      spawnInterval -= 400;
     }
   }  
 
@@ -334,10 +370,11 @@ void Grid::drawEnemies(SDL_Renderer* renderer)
         }
       }
     }
-    // if pokemon's projectile is not being thrown, throw it
+    // if enemy's projectile is not being thrown, throw it
     else 
     {
-      enemies[i]->throwProjectile();
+      if (checkInRange(enemies[i]->moverRect, enemies[i]->atkRange, false))
+        enemies[i]->throwProjectile();
     }    
   }
 }

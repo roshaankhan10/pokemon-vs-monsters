@@ -41,10 +41,11 @@ private:
   SDL_Texture* enemyTexture;
   SDL_Texture* projTexture;
   SDL_Texture* projTextureE;
-  int spawnInterval = 5000; // stores interval in ms between successive spawns, rn set to 5s
+  int spawnInterval = 10000; // stores interval in ms between successive spawns, rn set to 10s
   uint32_t lastSpawnTime = 0; // stores time in ms when last spawn occurred
   int enemiesKilled = 0; // stored count of enemies killed in the particular wave
   SDL_Texture* pokeballTexture;
   
   bool checkCollision(const SDL_Rect& rect1, const SDL_Rect& rect2); 
+  bool checkInRange(const SDL_Rect& rect, const int range, const bool isPokemon);
 };
