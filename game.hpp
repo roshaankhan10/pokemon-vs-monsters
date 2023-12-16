@@ -39,12 +39,13 @@ class Game{
 
 public:
 
+    bool GOScreen(bool* w);
     bool StartScreen();
     bool init();
     bool loadMedia();
     void close();
     SDL_Texture* loadTexture( std::string path );
-    void run();
+    void run(bool* x);
     // method to determine if mouse is over a draggable object to start dragging it by changing selectedObject
     bool IsMouseOverDraggableObject(int x, int y, std::vector<DraggableObject*> objects, DraggableObject*& selectedObject);
     TTF_Font* loadFont(const std::string& fontPath, int fontSize);

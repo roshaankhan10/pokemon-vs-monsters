@@ -14,9 +14,13 @@ int main(int argc, char *argv[]){
         printf( "Failed to load media!\n" );
         return 0;
     }
+    bool w=true;
+    while(w){
+        game.run(&w);
+    }
 
     // after initializing and loading, start running the game
-    game.run();
+    // game.run();
 
     // close game when running stops
     game.close();

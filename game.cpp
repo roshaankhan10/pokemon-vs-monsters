@@ -252,7 +252,54 @@ bool Game:: StartScreen(){
 	return true;
 }
 
-void Game::run( )
+bool Game::GOScreen(bool* w){
+	SDL_Event e;
+	SDL_Texture* background = NULL; 
+	background = loadTexture("assets/GameOverScreen.png");
+
+	// if we are unable to load textures, we can't display start screen so return false
+	if (background == NULL)
+	{
+			printf("Unable to run due to error: %s\n",SDL_GetError());
+			return false;
+	} 
+
+	// render background and start button
+	SDL_Rect backgroundrect={0,0,1000,600};
+	SDL_RenderCopy(gRenderer,background,NULL,&backgroundrect);
+
+	// loop runs to keep displaying start screen until user clicks on start button
+	bool quitStart = false;
+	while(!quitStart)
+	{
+		while(SDL_PollEvent( &e ) != 0 )
+		{
+			if (e.type == SDL_MOUSEBUTTONDOWN)
+			{
+				int x, y;
+				SDL_GetMouseState(&x, &y);
+				if (x >= 220 && x <= 420 && y >= 345 && y<= 375){
+					*w=true;
+					quitStart = true;
+				}
+				if (x >= 625 && x <= 750 && y >= 345 && y<= 375){
+					*w=false;
+					quitStart = true;
+				}
+			}
+		}
+		SDL_RenderCopy(gRenderer,background,NULL,&backgroundrect);
+		SDL_RenderPresent(gRenderer);
+	}
+
+	// destroy textures as not needed anymore
+	SDL_DestroyTexture(background);
+	
+	// now that screen worked fine, return true
+	return true;
+}
+
+void Game::run( bool* x )
 {
 	bool quit = false;
 	SDL_Event e;
@@ -294,6 +341,11 @@ void Game::run( )
 			//User requests quit
 			if( e.type == SDL_QUIT )
 			{
+				if (!GOScreen(x))
+					{
+						// if gameover screen doesn't work, quit the game
+						quit = true;
+					}
 				quit = true;
 			}
 
