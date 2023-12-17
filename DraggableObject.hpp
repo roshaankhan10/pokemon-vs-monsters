@@ -1,4 +1,4 @@
-// #pragma once
+#pragma once
 #include"Unit.hpp"
 
 class DraggableObject : public Unit

@@ -1,11 +1,12 @@
 #include"Character.hpp"
 #include"Projectile.hpp"
+#include"Pokeball.hpp"
 
 class Enemy: public Character
 {
   public:
     // Enemy(SDL_Rect src, SDL_Rect mover, int power, int range, int speed, std::vector<SDL_Rect> frames, SDL_Texture* Texture, int health, int scoreDrop);
-    Enemy(SDL_Rect src, SDL_Rect mover, int power, int range, int speed, std::vector<SDL_Rect> frames, SDL_Texture* Texture, Projectile proj, int health, int scoreDrop);
+    Enemy(SDL_Rect src, SDL_Rect mover, int power, int range, int speed, std::vector<SDL_Rect> frames, SDL_Texture* Texture, Projectile proj, int health, int scoreDrop, std::string pokeType, int pokeQty);
 
     void moveForward();
     void gotHit(int damage) override;
@@ -13,7 +14,7 @@ class Enemy: public Character
     void throwProjectile() ;
 
     Projectile projectileE;
-    // Projectile* currProjE;
+    Pokeball pokeDrop;
     bool isThrown = false;
     
   // private:

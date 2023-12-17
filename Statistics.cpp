@@ -7,8 +7,8 @@ Statistics::Statistics(SDL_Rect scoreSrc, SDL_Rect scoreMover, SDL_Texture* text
   // greatball: = {6, 6, 36, 36}
   // ultraball: = {102, 6, 36, 36}
 
-  PokeballUnit* pokeball = new PokeballUnit ({54, 6, 36, 36}, {800, 20, 36, 36}, "pokeball", texture);
-  PokeballUnit* greatball = new PokeballUnit ({6, 6, 36, 36}, {850, 20, 36, 36}, "greatball", texture);
+  PokeballUnit* pokeball = new PokeballUnit ({54, 6, 36, 36}, {800, 20, 36, 36}, "pokeball", texture, 10);
+  PokeballUnit* greatball = new PokeballUnit ({6, 6, 36, 36}, {850, 20, 36, 36}, "greatball", texture, 3);
   PokeballUnit* ultraball = new PokeballUnit ({102, 6, 36, 36}, {900, 20, 36, 36}, "ultraball", texture);
   pokeballs.push_back(pokeball);
   pokeballs.push_back(greatball);
@@ -61,3 +61,24 @@ void Statistics::displayStats(SDL_Renderer* renderer, TTF_Font* font)
   displayText(renderer, font, scoreText, 800, 110);
 }
 
+void Statistics::updateBalls(std::string ballType, int qty)
+{
+  if (ballType == "pokeball")
+    pokeballs[0]->ball.amount += qty;
+  else if (ballType == "greatball")
+    pokeballs[1]->ball.amount += qty;
+  else
+    pokeballs[2]->ball.amount += qty;
+}
+
+bool Statistics::haveBalls(Pokeball ball)
+{
+  for (int i = 0; i < pokeballs.size(); i++)
+  {
+    if (pokeballs[i]->ball.ballType == ball.ballType)
+    {
+      return pokeballs[i]->ball.amount >= ball.amount;
+    }
+  }
+  return false;
+}

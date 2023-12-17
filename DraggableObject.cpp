@@ -3,24 +3,24 @@
 
 DraggableObject::DraggableObject(SDL_Texture* Texture, SDL_Rect SrcRect, SDL_Rect MoverRect) 
   : texture(Texture), Unit(SrcRect, MoverRect), origPosition(MoverRect), isDragged(false)
-{
-}
+{}
        
 // When the object is being dragged, update its position based on the mouse cursor's movement.
 void DraggableObject::UpdatePosition(int mouseX, int mouseY) 
 {
   moverRect.x = mouseX - (moverRect.w / 2);
   moverRect.y = mouseY - (moverRect.h / 2);
-  // call draw here if not working outside?
 }
 
 // draws the draggable object at its current position
 void DraggableObject::draw(SDL_Renderer* renderer) 
 {
+  // draw draggable object
   SDL_RenderCopy(renderer, texture, &srcRect, &moverRect);
+
+  // cooldown drawing
   if (timer > 0.0)
   {
-    // renderCooldownRing(renderer, origPosition.x+origPosition.w/2, origPosition.y+origPosition.h/2, origPosition.w/2 + 4, timer);
     // y and h are taken from menu box while x and w is of character
     renderShrinkingRectangle(renderer, origPosition.x-2, 30, origPosition.w+2, 63, timer);
     timer -= 0.01;

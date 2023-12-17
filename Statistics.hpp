@@ -12,6 +12,8 @@ public:
   Statistics(SDL_Rect scoreSrc, SDL_Rect scoreMover, SDL_Texture* texture);
   void displayText(SDL_Renderer* renderer, TTF_Font* font, const std::string& text, int x, int y);
   void displayStats(SDL_Renderer* renderer, TTF_Font* font);
+  void updateBalls(std::string ballType, int qty);
+  bool haveBalls(Pokeball ball);
 
   Score scores;
   std::vector<PokeballUnit*> pokeballs;

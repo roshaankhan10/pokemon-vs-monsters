@@ -191,7 +191,7 @@ SDL_Texture* Game::loadTexture( std::string path )
 	return newTexture;
 }
 
-bool Game::IsMouseOverDraggableObject(int x, int y, std::vector<DraggableObject*> objects, DraggableObject*& selectedObject) {
+bool Game::IsMouseOverDraggableObject(int x, int y, std::vector<DraggableObject*> objects, DraggableObject*& selectedObject, int& index) {
 	for (int i = 0; i < objects.size(); i++)
 	{
 		// Check if the mouse coordinates are within the object's bounding box
@@ -199,6 +199,7 @@ bool Game::IsMouseOverDraggableObject(int x, int y, std::vector<DraggableObject*
 		{ 
 			// Store the selected object for future reference
 			selectedObject = objects[i];
+			index = i;
 			return true;
 		}
 	}
@@ -322,17 +323,35 @@ void Game::run( bool* x )
 	DraggableObject* pikachu = new DraggableObject(pokemons, {1365, 0, 39, 46}, {450, 50, 35, 35});
 	DraggableObject* azumarill = new DraggableObject(pokemons, {1619,2,61,60}, {490, 40, 50, 50});
 	
+	pokemonMenu.pokemonIcons.push_back(pikachu);
+	pokemonMenu.pokemonIcons.push_back(azumarill);
 	pokemonMenu.pokemonIcons.push_back(braviary);
 	pokemonMenu.pokemonIcons.push_back(charizard);
 	pokemonMenu.pokemonIcons.push_back(metagross);
-	pokemonMenu.pokemonIcons.push_back(pikachu);
-	pokemonMenu.pokemonIcons.push_back(azumarill);
+
+	PokeballUnit* pikaball = new PokeballUnit({54, 6, 36, 36}, {450, 95, 10, 10}, "pokeball", pokeballSprites, 3);
+	PokeballUnit* azuball = new PokeballUnit({54, 6, 36, 36}, {500, 95, 10, 10}, "pokeball", pokeballSprites, 5);
+	PokeballUnit* bravball = new PokeballUnit({6, 6, 36, 36}, {260, 95, 10, 10}, "greatball", pokeballSprites, 3);
+	PokeballUnit* charball = new PokeballUnit({6, 6, 36, 36}, {320, 95, 10, 10}, "greatball", pokeballSprites, 5);
+	PokeballUnit* metaball = new PokeballUnit({102, 6, 36, 36}, {390, 95, 10, 10}, "ultraball", pokeballSprites, 2);
+
+	pokemonMenu.pokemonCosts.push_back(pikaball);
+	pokemonMenu.pokemonCosts.push_back(azuball);
+	pokemonMenu.pokemonCosts.push_back(bravball);
+	pokemonMenu.pokemonCosts.push_back(charball);
+	pokemonMenu.pokemonCosts.push_back(metaball);
 
 	// creating grid to store all pokemon
 	Grid grid{pokemons, monsters, projectiles, pokeballSprites, projectilesE, 50, 155, 73, 83, 5, 9};	
 
 	// to check if game over or not
 	bool gameOver = false;
+
+	// to overlay red rect when player doesn't have enough pokeballs to deploy a pokemon
+	bool doOverlay = false;
+
+	// keeps tracks of the index of selected pokemon from menu				
+	int index;
 
 	// displays start screen, if it works fine, returns true, else false
 	if (!StartScreen())
@@ -368,11 +387,23 @@ void Game::run( bool* x )
 					SDL_GetMouseState(&xMouse,&yMouse);
 					
 					// Check if the mouse click is on a draggable object
-					if (IsMouseOverDraggableObject(xMouse, yMouse, pokemonMenu.pokemonIcons, selectedPokemon)) 
+					if (IsMouseOverDraggableObject(xMouse, yMouse, pokemonMenu.pokemonIcons, selectedPokemon, index)) 
 					{
-						// You can now track that selectedPokemon is being dragged
+						// ensures pokemon is not on cooldown
 						if (!selectedPokemon->isCoolingdown())
-						selectedPokemon->StartDragging();
+						{
+							// ensures player has enough pokeballs to deploy it
+						  if (grid.stats.haveBalls(pokemonMenu.pokemonCosts[index]->ball))
+							{
+								// You can now track that selectedPokemon is being dragged
+								selectedPokemon->StartDragging();
+							}
+							else
+							{
+								// sets doOverlay to true which will later display a block indicating cost don't match after menu is drawn
+								doOverlay = true;
+							}
+						}
           }
         } 
 				// enemy no longer spawn due to right click
@@ -400,6 +431,8 @@ void Game::run( bool* x )
 					if (grid.placePokemon(xMouse, yMouse, selectedPokemon->srcRect))
 					{
 						selectedPokemon->startCooldown();
+						grid.stats.updateBalls(pokemonMenu.pokemonCosts[index]->ball.ballType, 
+						-pokemonMenu.pokemonCosts[index]->ball.amount);
 					}
 
 					// Now we can stop dragging the selectedPokemon and return it to it's original position
@@ -421,11 +454,19 @@ void Game::run( bool* x )
 			
 			// Create a rectangle with white color 
 			SDL_SetRenderDrawColor( gRenderer, 0xFF, 0xFF, 0xFF, 0xFF );
-			SDL_Rect whiteRect = {240, 30, 300, 60};
+			SDL_Rect whiteRect = {240, 30, 300, 80};
 			SDL_RenderFillRect(gRenderer, &whiteRect);
 			
 			// draws the menu, including the selectedPokemon as it is coordinates are changed by reference through selectedPokemon
 			pokemonMenu.drawMenu(gRenderer);
+
+			// overlays a red rect when stats are not enough to deploy selected pokemon
+			if (doOverlay)
+			{
+				SDL_SetRenderDrawColor( gRenderer, 0x63, 0x03, 0x11, 0x05 );
+				SDL_RenderFillRect(gRenderer, &selectedPokemon->moverRect);
+				doOverlay = false;
+			}
 
 			// clears all dead characters
 			grid.cleanCharacters();
@@ -483,12 +524,24 @@ void Game::run( bool* x )
 	delete metagross;
 	delete pikachu;
 
+	delete bravball;
+	delete charball;
+	delete azuball;
+	delete metaball;
+	delete pikaball;
+
 	for (int i = 0; i < pokemonMenu.pokemonIcons.size(); i++)
 	{
 		// initialize them to nullptr to prevent dangling pointers
 		pokemonMenu.pokemonIcons[i] = nullptr ;
 	}
 	
+	for (int i = 0; i < pokemonMenu.pokemonCosts.size(); i++)
+	{
+		// initialize them to nullptr to prevent dangling pointers
+		pokemonMenu.pokemonCosts[i] = nullptr ;
+	}
+		
 	// initialized to nullptr to prevent dangling pointers
 	selectedPokemon = nullptr;
 }

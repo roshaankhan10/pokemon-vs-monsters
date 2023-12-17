@@ -103,11 +103,11 @@ Grid::Grid(SDL_Texture* Texture, SDL_Texture* enem, SDL_Texture* proj, SDL_Textu
   projectiles.push_back(thanosBallPtr);
 
   // now insert all possible enemiesm, in order of weak to strong, i.e. weak inserted at lower index
-  Enemy* southpawObj = new Enemy(southpawStates[0], southpaw, 10, 2, 3, southpawStates, enemyTexture, *southpawBallPtr, 70, 3);
-  Enemy* birdObj = new Enemy(birdStates[0], bird, 7, 4, 6, birdStates, enemyTexture, *birdBallPtr, 60, 5);
-  Enemy* jellaquidObj = new Enemy(jellaquidStates[0], jellaquid, 10, 6, 4, jellaquidStates, enemyTexture, *jellaquidBallPtr, 100, 10);
-  Enemy* thanosObj = new Enemy(thanosStates[0], thanos, 18, 3, 1, thanosStates, enemyTexture, *thanosBallPtr, 200, 16);
-  Enemy* dragonObj = new Enemy(dragonStates[0], dragon, 30, 2, 2, dragonStates, enemyTexture, *dragonFlamePtr, 180, 25);
+  Enemy* southpawObj = new Enemy(southpawStates[0], southpaw, 10, 2, 3, southpawStates, enemyTexture, *southpawBallPtr, 70, 3, "pokeball", 1);
+  Enemy* birdObj = new Enemy(birdStates[0], bird, 7, 4, 6, birdStates, enemyTexture, *birdBallPtr, 60, 5, "pokeball", 3);
+  Enemy* jellaquidObj = new Enemy(jellaquidStates[0], jellaquid, 10, 6, 4, jellaquidStates, enemyTexture, *jellaquidBallPtr, 100, 10, "greatball", 1);
+  Enemy* thanosObj = new Enemy(thanosStates[0], thanos, 18, 3, 1, thanosStates, enemyTexture, *thanosBallPtr, 200, 16, "greatball", 3);
+  Enemy* dragonObj = new Enemy(dragonStates[0], dragon, 30, 2, 2, dragonStates, enemyTexture, *dragonFlamePtr, 180, 25, "ultraball", 1);
   possibleEnemies.push_back(southpawObj);
   possibleEnemies.push_back(birdObj);
   possibleEnemies.push_back(jellaquidObj);
@@ -278,7 +278,8 @@ void Grid::spawnEnemy()
   possibleEnemies[enemyIndex]->atkPower, possibleEnemies[enemyIndex]->atkRange, 
   possibleEnemies[enemyIndex]->movingSpeed, possibleEnemies[enemyIndex]->states, 
   possibleEnemies[enemyIndex]->texture, possibleEnemies[enemyIndex]->projectileE, 
-  possibleEnemies[enemyIndex]->health.maxHealth, possibleEnemies[enemyIndex]->pointsDrop);
+  possibleEnemies[enemyIndex]->health.maxHealth, possibleEnemies[enemyIndex]->pointsDrop,
+  possibleEnemies[enemyIndex]->pokeDrop.ballType, possibleEnemies[enemyIndex]->pokeDrop.amount);
 
   enemies.push_back(newEnemy);
 }
@@ -402,6 +403,7 @@ void Grid::cleanCharacters()
     if (enemies[k]->isDead())
     {
       stats.scores.points += enemies[k]->pointsDrop;
+      stats.updateBalls(enemies[k]->pokeDrop.ballType, enemies[k]->pokeDrop.amount);
       delete enemies[k];
       enemies[k] = nullptr;
     }

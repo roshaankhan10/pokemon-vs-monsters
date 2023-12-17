@@ -5,7 +5,7 @@
 class PokeballUnit: public Unit
 {
 public:
-  PokeballUnit(SDL_Rect src, SDL_Rect mover, std::string ballName, SDL_Texture* texture);
+  PokeballUnit(SDL_Rect src, SDL_Rect mover, std::string ballName, SDL_Texture* texture, int qty=0);
 
   void draw(SDL_Renderer* renderer) override;
   Pokeball ball;

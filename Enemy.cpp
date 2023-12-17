@@ -4,8 +4,8 @@
 // Enemy::Enemy(SDL_Rect src, SDL_Rect mover, int power, int range, int speed, std::vector<SDL_Rect> frames, SDL_Texture* Texture, int health, int scoreDrop)
 //   : Character(src, mover, power, range, frames, Texture, health), pointsDrop(scoreDrop), movingSpeed(speed)
 // {}
-Enemy::Enemy(SDL_Rect src, SDL_Rect mover, int power, int range, int speed, std::vector<SDL_Rect> frames, SDL_Texture* Texture, Projectile proj, int health, int scoreDrop)
-  : Character(src, mover, power, range, frames, Texture, health), pointsDrop(scoreDrop), movingSpeed(speed), projectileE(proj)
+Enemy::Enemy(SDL_Rect src, SDL_Rect mover, int power, int range, int speed, std::vector<SDL_Rect> frames, SDL_Texture* Texture, Projectile proj, int health, int scoreDrop, std::string pokeType, int pokeQty)
+  : Character(src, mover, power, range, frames, Texture, health), pointsDrop(scoreDrop), movingSpeed(speed), projectileE(proj), pokeDrop(pokeType, pokeQty)
 {}
 
 // moves enemy forward
