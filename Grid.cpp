@@ -398,8 +398,8 @@ void Grid::cleanCharacters()
   // sets all dead enemies to nullptr after freeing memory
   for (int k = 0; k < enemies.size(); k++)
   {
-    // for testing purposes, enemies are killed if they cross 500 units distance
-    if (enemies[k]->isDead() || enemies[k]->moverRect.x > 500)
+    // for testing purposes
+    if (enemies[k]->isDead())
     {
       stats.scores.points += enemies[k]->pointsDrop;
       delete enemies[k];
@@ -457,4 +457,13 @@ Grid::~Grid()
     delete projectilesE[m];
     projectilesE[m] = nullptr;
   }
+}
+
+bool Grid::isGameOver(){
+  for (int i = 0; i < enemies.size(); i++)
+  {
+    if (enemies[i]->moverRect.x > 500)
+      return true;
+  }
+  return false;
 }

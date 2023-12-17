@@ -257,34 +257,39 @@ bool Game::GOScreen(bool* w){
 	SDL_Texture* background = NULL; 
 	background = loadTexture("assets/GameOverScreen.png");
 
-	// if we are unable to load textures, we can't display start screen so return false
+	// if we are unable to load textures, we can't display GameOver screen so return false
 	if (background == NULL)
 	{
 			printf("Unable to run due to error: %s\n",SDL_GetError());
 			return false;
 	} 
 
-	// render background and start button
+	// render background
 	SDL_Rect backgroundrect={0,0,1000,600};
 	SDL_RenderCopy(gRenderer,background,NULL,&backgroundrect);
 
-	// loop runs to keep displaying start screen until user clicks on start button
-	bool quitStart = false;
-	while(!quitStart)
+	// loop runs to keep displaying GameOver screen until user clicks on exit button
+	bool quitGameOver = false;
+	while(!quitGameOver)
 	{
 		while(SDL_PollEvent( &e ) != 0 )
 		{
+			if (e.type == SDL_QUIT)
+			{
+				quitGameOver = true;
+			}
+
 			if (e.type == SDL_MOUSEBUTTONDOWN)
 			{
 				int x, y;
 				SDL_GetMouseState(&x, &y);
 				if (x >= 220 && x <= 420 && y >= 345 && y<= 375){
 					*w=true;
-					quitStart = true;
+					quitGameOver = true;
 				}
 				if (x >= 625 && x <= 750 && y >= 345 && y<= 375){
 					*w=false;
-					quitStart = true;
+					quitGameOver = true;
 				}
 			}
 		}
@@ -326,6 +331,9 @@ void Game::run( bool* x )
 	// creating grid to store all pokemon
 	Grid grid{pokemons, monsters, projectiles, pokeballSprites, projectilesE, 50, 155, 73, 83, 5, 9};	
 
+	// to check if game over or not
+	bool gameOver = false;
+
 	// displays start screen, if it works fine, returns true, else false
 	if (!StartScreen())
 	{
@@ -335,12 +343,14 @@ void Game::run( bool* x )
 
 	while( !quit )
 	{
+
 		//Handle events on queue
 		while( SDL_PollEvent( &e ) != 0 )
 		{
 			//User requests quit
 			if( e.type == SDL_QUIT )
 			{
+				Mix_HaltMusic();
 				if (!GOScreen(x))
 					{
 						// if gameover screen doesn't work, quit the game
@@ -404,45 +414,66 @@ void Game::run( bool* x )
 		SDL_RenderClear(gRenderer); //removes everything from renderer
 		SDL_RenderCopy(gRenderer, gTexture, NULL, NULL);//Draws background to renderer
 
-		//***********************draw the objects here********************
-		
-    // Create a rectangle with white color 
-		SDL_SetRenderDrawColor( gRenderer, 0xFF, 0xFF, 0xFF, 0xFF );
-    SDL_Rect whiteRect = {240, 30, 300, 60};
-    SDL_RenderFillRect(gRenderer, &whiteRect);
-		
-		// draws the menu, including the selectedPokemon as it is coordinates are changed by reference through selectedPokemon
-		pokemonMenu.drawMenu(gRenderer);
+		if (!quit)
+		{
 
-		// clears all dead characters
-		grid.cleanCharacters();
+			//***********************draw the objects here********************
+			
+			// Create a rectangle with white color 
+			SDL_SetRenderDrawColor( gRenderer, 0xFF, 0xFF, 0xFF, 0xFF );
+			SDL_Rect whiteRect = {240, 30, 300, 60};
+			SDL_RenderFillRect(gRenderer, &whiteRect);
+			
+			// draws the menu, including the selectedPokemon as it is coordinates are changed by reference through selectedPokemon
+			pokemonMenu.drawMenu(gRenderer);
 
-		// draws all pokemons placed on grid
-		grid.drawGrid(gRenderer);
+			// clears all dead characters
+			grid.cleanCharacters();
 
-		// spawn enemy randomly
-		grid.shouldEnemySpawn();
+			// draws all pokemons placed on grid
+			grid.drawGrid(gRenderer);
 
-		// draws all enemies
-		grid.drawEnemies(gRenderer);
+			// spawn enemy randomly
+			grid.shouldEnemySpawn();
 
-		// draws stats
-		grid.stats.displayStats(gRenderer, font);
+			// draws all enemies
+			grid.drawEnemies(gRenderer);
 
-		// draws capacity of enemies that can spawn, may need to move this to grid class
-		std::string capacity = "Wave no. " + std::to_string(grid.currCap);
-		grid.stats.displayText(gRenderer, font, capacity, 800, 150);
-				
-		//****************************************************************
-		SDL_RenderPresent(gRenderer); //displays the updated renderer
+			// draws stats
+			grid.stats.displayStats(gRenderer, font);
 
-		// reduced delay to 50 ms for smooth transitions
-		SDL_Delay(120);	//causes sdl engine to delay for specified miliseconds
-		
-		// play the music 
-		if(Mix_PlayingMusic()==0){
-			Mix_PlayMusic(bgMusic,2);
+			// draws capacity of enemies that can spawn, may need to move this to grid class
+			std::string capacity = "Wave no. " + std::to_string(grid.currCap);
+			grid.stats.displayText(gRenderer, font, capacity, 800, 150);
+
+			// checks if game is over or not
+			gameOver = grid.isGameOver();
+					
+			//****************************************************************
+			SDL_RenderPresent(gRenderer); //displays the updated renderer
+
+			// reduced delay to 120 ms for smooth transitions
+			SDL_Delay(120);	//causes sdl engine to delay for specified miliseconds
+			
+			// play the music 
+			if(Mix_PlayingMusic()==0){
+				Mix_PlayMusic(bgMusic,2);
+			}
 		}
+
+	
+		// checks game over condition
+		if (gameOver)
+		{
+			Mix_HaltMusic();
+			if (!GOScreen(x))
+					{
+						// if gameover screen doesn't work, quit the game
+						quit = true;
+					}
+			quit = true;
+		}
+		
 	}
 
 	// free heap to prevent memory leakages

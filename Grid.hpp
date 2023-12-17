@@ -27,6 +27,9 @@ public:
   int currCap = 0; // stores capacity of current enemies
   Statistics stats;
 
+  // handles game over logic
+  bool isGameOver();
+
 private:
   // the array that will store coordinates of each tile on the grid/background
   int startX, startY, tileWidth, tileHeight, numRows, numCols;
