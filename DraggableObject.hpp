@@ -16,12 +16,15 @@ class DraggableObject : public Unit
       
   private:
     SDL_Texture* texture;
-    // this is used to original values of moverRect so it can be restored back after dropping
+
+    // used to store original values of moverRect so it can be restored back after dropping
     SDL_Rect origPosition;
+
+    // checks if it is being dragged or not, used in control
     bool isDragged;
-    
+
+    // variables to handle cooldown
     double timer = 0.0;
     bool onCooldown = false;
-    void renderCooldownRing(SDL_Renderer* renderer, int x, int y, int radius, double cooldownPercentage);
     void renderShrinkingRectangle(SDL_Renderer* renderer, int x, int y, int width, int height, double cooldownPercentage);
 };

@@ -33,21 +33,29 @@ public:
 private:
   // the array that will store coordinates of each tile on the grid/background
   int startX, startY, tileWidth, tileHeight, numRows, numCols;
-  std::vector<SDL_Rect> tiles;
-  std::vector<Pokemon*> pokemons;
-  std::vector<Pokemon*> availablePokemons;
-  std::vector<Enemy*> enemies;
-  std::vector<Enemy*> possibleEnemies;
-  std::vector<Projectile*> projectiles;
-  std::vector<Projectile*> projectilesE;
-  SDL_Texture* texture;
-  SDL_Texture* enemyTexture;
-  SDL_Texture* projTexture;
-  SDL_Texture* projTextureE;
+
+  // stores health of player house
+  Healthbar playerHealth;
+
+  // multiple arrays, each for a purpose indicated by their name
+  std::vector<SDL_Rect> tiles; // for each tile on the grid and it's coordinates
+  std::vector<Pokemon*> pokemons; // pointers for each pokemon on the grid
+  std::vector<Pokemon*> availablePokemons; // pointers for pokemon users can deploy
+  std::vector<Enemy*> enemies; // pointers for enemies on the grid
+  std::vector<Enemy*> possibleEnemies; // pointers for all possible enemies
+  std::vector<Projectile*> projectiles; // pointers for pokemon projectiles
+  std::vector<Projectile*> projectilesE; // pointers for enemy projectiles
+  
+  // textures for sprite sheets
+  SDL_Texture* texture; // texture for pokemon
+  SDL_Texture* enemyTexture; // texture for enemy
+  SDL_Texture* projTexture; // texture for pokemon projectile
+  SDL_Texture* projTextureE; // texture for enemy projectile
+  SDL_Texture* pokeballTexture; // texture for pokeball
+
   int spawnInterval = 10000; // stores interval in ms between successive spawns, rn set to 10s
   uint32_t lastSpawnTime = 0; // stores time in ms when last spawn occurred
   int enemiesKilled = 0; // stored count of enemies killed in the particular wave
-  SDL_Texture* pokeballTexture;
   
   bool checkCollision(const SDL_Rect& rect1, const SDL_Rect& rect2); 
   bool checkInRange(const SDL_Rect& rect, const int range, const bool isPokemon);

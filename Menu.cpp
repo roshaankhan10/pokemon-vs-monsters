@@ -1,5 +1,4 @@
 #include"Menu.hpp"
-#include"TextDisplay.hpp"
 
 // draws all pokemon Icons in the menu
 void Menu::drawMenu(SDL_Renderer* gRnderer)
@@ -14,10 +13,10 @@ void Menu::drawMenu(SDL_Renderer* gRnderer)
     pokemonCosts[i]->draw(gRnderer);
 
     std::string qty = "x " + std::to_string(pokemonCosts[i]->ball.amount);
-    TTF_Font* font = loadFont("assets/16020_FUTURAM.ttf", 14);
+    TTF_Font* font = displayer.loadFont("assets/16020_FUTURAM.ttf", 14);
     if (font == NULL) 
       printf("Unable to run due to error: %s\n",TTF_GetError());
     else
-      displayText(gRnderer, font, qty, pokemonCosts[i]->moverRect.x+15, pokemonCosts[i]->moverRect.y-5);
+      displayer.displayText(gRnderer, font, qty, pokemonCosts[i]->moverRect.x+15, pokemonCosts[i]->moverRect.y-5);
   }
 }

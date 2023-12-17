@@ -61,34 +61,6 @@ void DraggableObject::startCooldown()
   onCooldown = true;
 }
 
-void DraggableObject::renderCooldownRing(SDL_Renderer* renderer, int x, int y, int radius, double cooldownPercentage) 
-{
-    // Set the drawing color for the cooldown ring (e.g., black)
-    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0);
-
-    // Calculate the start and end angles based on the cooldown percentage
-    double startAngle = 0;
-    double endAngle = 2 * M_PI * cooldownPercentage;
-
-    /// Calculate the outer and inner radii based on thickness, for now, thickness is 2
-    int outerRadius = radius + 2 / 2;
-    int innerRadius = radius - 2 / 2;
-
-    // Draw the filled portion of the cooldown ring
-    for (double angle = startAngle; angle < endAngle; angle += 0.01) {
-        int outerX = static_cast<int>(x + outerRadius * std::cos(angle));
-        int outerY = static_cast<int>(y + outerRadius * std::sin(angle));
-
-        int innerX = static_cast<int>(x + innerRadius * std::cos(angle));
-        int innerY = static_cast<int>(y + innerRadius * std::sin(angle));
-
-        SDL_RenderDrawLine(renderer, innerX, innerY, outerX, outerY);
-    }
-    
-    // Set the drawing color back to default (white)
-    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
-}
-
 void DraggableObject::renderShrinkingRectangle(SDL_Renderer* renderer, int x, int y, int width, int height, double cooldownPercentage) 
 {
     // Set the drawing color for the shrinking rectangle (translucent gray)

@@ -101,7 +101,7 @@ bool Game::loadMedia()
 		// if sound also loaded, load font
 		else 
 		{
-			font = loadFont("assets/16020_FUTURAM.ttf", 24);
+			font = displayer.loadFont("assets/16020_FUTURAM.ttf", 24);
 			if (font == NULL) 
 			{
 				printf("Unable to run due to error: %s\n",TTF_GetError());
@@ -152,16 +152,6 @@ void Game::close()
 	SDL_Quit();
 	TTF_Quit();
 	Mix_Quit();
-}
-
-// Function to load a font
-TTF_Font* Game::loadFont(const std::string& fontPath, int fontSize) 
-{
-    TTF_Font* font = TTF_OpenFont(fontPath.c_str(), fontSize);
-    if (font == nullptr) {
-        std::cerr << "Font loading failed: " << TTF_GetError() << std::endl;
-    }
-    return font;
 }
 
 SDL_Texture* Game::loadTexture( std::string path )
@@ -481,11 +471,14 @@ void Game::run( bool* x )
 			grid.drawEnemies(gRenderer);
 
 			// draws stats
-			grid.stats.displayStats(gRenderer, font);
+			grid.stats.displayStats(gRenderer);
 
 			// draws capacity of enemies that can spawn, may need to move this to grid class
 			std::string capacity = "Wave no. " + std::to_string(grid.currCap);
-			grid.stats.displayText(gRenderer, font, capacity, 800, 150);
+			displayer.displayText(gRenderer, font, capacity, 800, 150);
+			
+			// need to load font again as deleted in displayer
+			font = displayer.loadFont("assets/16020_FUTURAM.ttf", 24);
 
 			// checks if game is over or not
 			gameOver = grid.isGameOver();

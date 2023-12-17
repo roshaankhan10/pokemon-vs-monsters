@@ -53,8 +53,13 @@ std::vector<SDL_Rect> thanosBall = {{3311,53,54,42},{3501,47,60,54},{3695,49,58,
 
 // initialize each tile of grid in constructor as well as pushes nullptr for each pokemon
 Grid::Grid(SDL_Texture* Texture, SDL_Texture* enem, SDL_Texture* proj, SDL_Texture* pokes, SDL_Texture* projE, int x = 50, int y = 155, int w = 70, int h = 80, int rows = 5, int cols = 9)
-  : startX(x), startY(y), tileWidth(w), tileHeight(h), numRows(rows), numCols(cols), texture(Texture), enemyTexture(enem), projTexture(proj), pokeballTexture(pokes), stats({}, {}, pokes), projTextureE(projE)
+  : startX(x), startY(y), tileWidth(w), tileHeight(h), numRows(rows), numCols(cols), texture(Texture), enemyTexture(enem), projTexture(proj), pokeballTexture(pokes), stats({}, {}, pokes), projTextureE(projE), playerHealth(780, 220, 250)
 {
+  // change width of player's healthbar to 200
+  playerHealth.moverRect.w = 180;
+  playerHealth.moverRect.h = 20;
+
+  // populate the vectors of tiles and pokemons
   for (int i = 0; i < rows; i++){
     for(int j = 0; j < cols; j++){
       tiles.push_back({x + (w * j), y + (h * i), w, h});
@@ -184,6 +189,13 @@ bool Grid::checkInRange(const SDL_Rect& rect, const int range, const bool isPoke
   else 
   {
     int totalRange = range * tileWidth;
+    
+    // within reach to damage castle then do so
+    if (rect.x + totalRange > 700)
+    {
+      return true;
+    }
+    
     for (int i = 0; i < pokemons.size(); i++)
     {
       if (pokemons[i] != nullptr)
@@ -196,6 +208,7 @@ bool Grid::checkInRange(const SDL_Rect& rect, const int range, const bool isPoke
           return true;
       }
     }
+
     return false;
   }
 }
@@ -203,6 +216,9 @@ bool Grid::checkInRange(const SDL_Rect& rect, const int range, const bool isPoke
 // iterates over the grid and draws all pokemon on that grid
 void Grid::drawGrid(SDL_Renderer* renderer)
 {
+  // draws healthbar of player
+  playerHealth.draw(renderer);
+
   for (int i = 0; i < pokemons.size(); i++)
   {
     if (pokemons[i] != nullptr)
@@ -364,9 +380,10 @@ void Grid::drawEnemies(SDL_Renderer* renderer)
       // check boundary condition only if projectile not destroyed
       if (!destroyed)
       {
-        // if it exceeds boundary, destroy it 
-        if (enemies[i]->projectileE.moverRect.x >= 800 && enemies[i]->isThrown)
+        // if it exceeds boundary, destroy it and decrement health 
+        if (enemies[i]->projectileE.moverRect.x >= 730 && enemies[i]->isThrown)
         {
+          playerHealth.currHealth -= enemies[i]->atkPower;
           enemies[i]->destroyProjectile();
         }
       }
@@ -464,7 +481,7 @@ Grid::~Grid()
 bool Grid::isGameOver(){
   for (int i = 0; i < enemies.size(); i++)
   {
-    if (enemies[i]->moverRect.x > 500)
+    if (playerHealth.currHealth <= 0)
       return true;
   }
   return false;

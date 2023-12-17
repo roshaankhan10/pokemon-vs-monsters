@@ -10,8 +10,8 @@ class Enemy: public Character
 
     void moveForward();
     void gotHit(int damage) override;
-    void destroyProjectile() ;
-    void throwProjectile() ;
+    void destroyProjectile();
+    void throwProjectile();
 
     Projectile projectileE;
     Pokeball pokeDrop;

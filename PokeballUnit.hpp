@@ -2,6 +2,7 @@
 #include "Pokeball.hpp"
 #include "Unit.hpp"
 
+// used to create a pokeball class that can be drawn such as in menu and stats
 class PokeballUnit: public Unit
 {
 public:

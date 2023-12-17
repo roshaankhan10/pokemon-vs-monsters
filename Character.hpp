@@ -10,8 +10,6 @@ public:
   virtual void gotHit(int damage) = 0;
   void draw(SDL_Renderer* renderer) override;
   bool isDead();
-
-// private:
   int atkPower, atkRange;
   Healthbar health;
   SDL_Texture* texture;

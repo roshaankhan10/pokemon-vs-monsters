@@ -37,6 +37,9 @@ class Game{
     SDL_Texture* projectilesE = NULL;
     SDL_Texture* pokeballSprites = NULL;
 
+    // class to display texts
+    TextDisplay displayer;
+
 public:
 
     bool GOScreen(bool* w);
@@ -48,6 +51,5 @@ public:
     void run(bool* x);
     // method to determine if mouse is over a draggable object to start dragging it by changing selectedObject
     bool IsMouseOverDraggableObject(int x, int y, std::vector<DraggableObject*> objects, DraggableObject*& selectedObject, int& index);
-    TTF_Font* loadFont(const std::string& fontPath, int fontSize);
 };
 

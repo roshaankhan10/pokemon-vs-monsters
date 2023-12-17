@@ -1,5 +1,6 @@
 #include"DraggableObject.hpp"
 #include"PokeballUnit.hpp"
+#include"TextDisplay.hpp"
 #include<vector>
 #include<SDL_ttf.h>
 
@@ -14,4 +15,5 @@ class Menu
     // need to make methods to draw pokeballSprites using pokemonCosts later
     
   private:
+    TextDisplay displayer;
 };

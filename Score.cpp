@@ -6,6 +6,7 @@ Score::Score(SDL_Rect src, SDL_Rect mover)
 
 void Score::draw(SDL_Renderer* renderer)
 {
-  // SDL_RenderCopy(renderer, texture, &srcRect, &moverRect);
-  // use sdl render text
+  TTF_Font* font = displayer.loadFont("assets/16020_FUTURAM.ttf", 24);
+  std::string scoreText = "Score: " + std::to_string(points);
+  displayer.displayText(renderer, font, scoreText, 800, 110);
 }

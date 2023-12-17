@@ -1,6 +1,7 @@
 #pragma once
 #include"Score.hpp"
 #include"PokeballUnit.hpp"
+#include"TextDisplay.hpp"
 #include<vector>
 #include<SDL_ttf.h>
 #include<iostream>
@@ -10,11 +11,12 @@ class Statistics
 {
 public:
   Statistics(SDL_Rect scoreSrc, SDL_Rect scoreMover, SDL_Texture* texture);
-  void displayText(SDL_Renderer* renderer, TTF_Font* font, const std::string& text, int x, int y);
-  void displayStats(SDL_Renderer* renderer, TTF_Font* font);
+  void displayStats(SDL_Renderer* renderer);
   void updateBalls(std::string ballType, int qty);
   bool haveBalls(Pokeball ball);
 
   Score scores;
   std::vector<PokeballUnit*> pokeballs;
+private:
+  TextDisplay displayer;
 };

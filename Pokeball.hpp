@@ -1,16 +1,14 @@
 #pragma once
 #include<string>
 
+
+// basic class that is used to know enemy drops, pokemon deploy costs and stats (player assets)
 class Pokeball
 {
   public:
     Pokeball(std::string ball, int amt);
 
-  // private:
+    // stores the type of pokeball and it's amount
     std::string ballType;
     int amount;
 };
-
-// pokeball: = {54, 6, 36, 36}
-// greatball: = {6, 6, 36, 36}
-// ultraball: = {102, 6, 36, 36}
