@@ -12,6 +12,9 @@ After compilation, run the a.exe file and enjoy.
 ### Objective
 Your mission is to defend your defense at all costs. The game combines the charm of Pokémon with the strategic elements of tower defense, creating an engaging and challenging experience.
 
+![Gameplay_1](./(https://media.licdn.com/dms/image/D4D22AQHDBAreSdMuow/feedshare-shrink_800/0/1715267078358?e=1723075200&v=beta&t=4MJa9d3EXVeGIDjkEf4ANBd2c2jW8YmWt3NlnoAONhk))
+![Gameplay_2](./(https://media.licdn.com/dms/image/D4D22AQFmqsu7il__2w/feedshare-shrink_800/0/1715267079706?e=1723075200&v=beta&t=ORd0hH0uM15_FW_O3uJQvY2WbODSE6RWcXqCFyPobXc))
+
 ### Controls
 To navigate the game seamlessly, familiarize yourself with the intuitive controls:
 
