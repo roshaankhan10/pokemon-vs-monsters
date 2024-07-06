@@ -12,8 +12,8 @@ After compilation, run the a.exe file and enjoy.
 ### Objective
 Your mission is to defend your defense at all costs. The game combines the charm of Pokémon with the strategic elements of tower defense, creating an engaging and challenging experience.
 
-![Gameplay_1](./(images/game_1.jfif))
-![Gameplay_2](./(images/game_2.jfif))
+![Gameplay_1](./images/game_1.jfif)
+![Gameplay_2](./images/game_2.jfif)
 
 ### Controls
 To navigate the game seamlessly, familiarize yourself with the intuitive controls:
