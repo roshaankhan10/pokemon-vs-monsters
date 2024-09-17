@@ -15,8 +15,14 @@ int main(int argc, char *argv[]){
         return 0;
     }
 
-    // after initializing and loading, start running the game
-    game.run();
+    // w is used to ensure game keeps running
+    bool w=true;
+
+    while(w){
+        // passed by reference so it can manipulated and used for screen transitioning
+        game.run(&w);
+    }
+
 
     // close game when running stops
     game.close();
